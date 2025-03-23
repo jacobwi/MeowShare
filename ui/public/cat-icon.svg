@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <title>Cat Icon</title>
+  <g stroke="none" fill="none">
+    <circle fill="#000000" cx="256" cy="256" r="256" opacity="0.1"></circle>
+    <g transform="translate(75.000000, 60.000000)" fill="#000000">
+      <path d="M180,12 C180,12 110,45 110,120 C110,170 140,192 140,210 C140,228 120,275 120,275 L105,310 C105,310 95,325 110,325 C125,325 140,300 140,300 C140,300 150,320 165,320 C180,320 180,300 180,300 L195,320 C195,320 210,325 220,315 C230,305 220,295 220,295 L210,275 C210,275 235,232 235,212 C235,192 260,170 260,120 C260,45 180,12 180,12 Z"></path>
+      <path d="M147,70 C147,70 142,90 135,95 C128,100 120,100 120,100" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"></path>
+      <path d="M213,70 C213,70 218,90 225,95 C232,100 240,100 240,100" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"></path>
+      <circle fill="#FFFFFF" cx="130" cy="60" r="10"></circle>
+      <circle fill="#FFFFFF" cx="230" cy="60" r="10"></circle>
+      <path d="M165,135 C165,135 180,145 195,135" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"></path>
+      <path d="M140,165 C140,165 165,195 210,165" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"></path>
+      <path d="M0,20 C0,20 25,0 60,40 C95,80 80,140 80,140" stroke="#000000" stroke-width="12" stroke-linecap="round"></path>
+      <path d="M360,20 C360,20 335,0 300,40 C265,80 280,140 280,140" stroke="#000000" stroke-width="12" stroke-linecap="round"></path>
+    </g>
+  </g>
+</svg>
