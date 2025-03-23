@@ -11,7 +11,7 @@ MeowShare is a secure file sharing application that can be easily self-hosted us
 
 2. Download the production Docker Compose file:
    ```bash
-   curl -O https://raw.githubusercontent.com/yourusername/meowshare/main/docker-compose.production.yaml
+   curl -O https://raw.githubusercontent.com/jacobwi/meowshare/master/docker-compose.production.yaml
    # or manually create the file as shown below
    ```
 
