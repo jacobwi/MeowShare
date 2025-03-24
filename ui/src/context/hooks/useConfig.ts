@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import ConfigContext from '../ConfigContext';
-import { ConfigContextType } from '../config-types';
+import { ConfigContextType } from '../types';
 
 /**
  * Custom hook to access the configuration context

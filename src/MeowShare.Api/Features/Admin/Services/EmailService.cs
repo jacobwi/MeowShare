@@ -233,11 +233,6 @@ public partial class EmailService(
                 _ => config.EnableSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None,
             };
 
-            // Log connection attempt
-            logger.LogWarning(
-                $"Connecting to {config.SmtpHost}:{config.SmtpPort} using {secureSocketOptions}"
-            );
-
             await client.ConnectAsync(config.SmtpHost, config.SmtpPort, secureSocketOptions);
 
             if (
@@ -254,7 +249,6 @@ public partial class EmailService(
         {
             logger.LogError(ex, "Failed to send email");
 
-            // Enhanced error logging
             if (ex.InnerException != null)
             {
                 logger.LogError(
