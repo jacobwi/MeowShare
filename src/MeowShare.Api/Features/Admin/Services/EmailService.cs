@@ -14,7 +14,8 @@ namespace MeowShare.Api.Features.Admin.Services;
 public partial class EmailService(
     ILogger<EmailService> logger,
     IEmailConfigRepository configRepository,
-    IEmailTemplateRepository templateRepository)
+    IEmailTemplateRepository templateRepository
+)
 {
     public async Task<EmailTemplate?> GetTemplateByNameAsync(string name)
     {
@@ -38,7 +39,7 @@ public partial class EmailService(
                 return new SendEmailResponse
                 {
                     Success = false,
-                    Error = "Email configuration is not set up"
+                    Error = "Email configuration is not set up",
                 };
 
             var message = CreateMimeMessage(options, config);
@@ -65,7 +66,7 @@ public partial class EmailService(
                 return new SendEmailResponse
                 {
                     Success = false,
-                    Error = $"Template with ID {templateId} not found"
+                    Error = $"Template with ID {templateId} not found",
                 };
 
             var rendered = RenderTemplate(template, data);
@@ -75,7 +76,7 @@ public partial class EmailService(
                 To = to,
                 Subject = rendered.Subject,
                 Body = rendered.Body,
-                IsHtml = template.IsHtml
+                IsHtml = template.IsHtml,
             };
 
             // Apply additional options if provided
@@ -106,7 +107,8 @@ public partial class EmailService(
     )
     {
         var template = await templateRepository.GetByIdAsync(Guid.Parse(templateId));
-        if (template == null) throw new ArgumentException($"Template with ID {templateId} not found");
+        if (template == null)
+            throw new ArgumentException($"Template with ID {templateId} not found");
 
         return RenderTemplate(template, data);
     }
@@ -142,7 +144,7 @@ public partial class EmailService(
             message.Body = new TextPart("html")
             {
                 Text =
-                    "<h1>Email Test</h1><p>This is a test email from MeowShare to verify your email configuration.</p>"
+                    "<h1>Email Test</h1><p>This is a test email from MeowShare to verify your email configuration.</p>",
             };
 
             await SendMessageAsync(message, config);
@@ -165,7 +167,8 @@ public partial class EmailService(
         );
 
         // Add To recipients
-        foreach (var recipient in options.To) message.To.Add(MailboxAddress.Parse(recipient));
+        foreach (var recipient in options.To)
+            message.To.Add(MailboxAddress.Parse(recipient));
 
         // Add Cc if provided
         if (options.Cc != null)
@@ -178,7 +181,8 @@ public partial class EmailService(
                 message.Bcc.Add(MailboxAddress.Parse(bcc));
 
         // Set Reply-To if provided
-        if (!string.IsNullOrEmpty(options.ReplyTo)) message.ReplyTo.Add(MailboxAddress.Parse(options.ReplyTo));
+        if (!string.IsNullOrEmpty(options.ReplyTo))
+            message.ReplyTo.Add(MailboxAddress.Parse(options.ReplyTo));
 
         message.Subject = options.Subject;
 
@@ -221,11 +225,20 @@ public partial class EmailService(
 
         try
         {
-            await client.ConnectAsync(
-                config.SmtpHost,
-                config.SmtpPort,
-                config.EnableSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None
+            // Determine secure socket options based on port and EnableSsl setting
+            var secureSocketOptions = config.SmtpPort switch
+            {
+                465 => SecureSocketOptions.SslOnConnect, // Always use SSL for port 465
+                587 => SecureSocketOptions.StartTls, // Always use STARTTLS for port 587
+                _ => config.EnableSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None,
+            };
+
+            // Log connection attempt
+            logger.LogInformation(
+                $"Connecting to {config.SmtpHost}:{config.SmtpPort} using {secureSocketOptions}"
             );
+
+            await client.ConnectAsync(config.SmtpHost, config.SmtpPort, secureSocketOptions);
 
             if (
                 !string.IsNullOrEmpty(config.SmtpUser) && !string.IsNullOrEmpty(config.SmtpPassword)
@@ -240,6 +253,17 @@ public partial class EmailService(
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to send email");
+
+            // Enhanced error logging
+            if (ex.InnerException != null)
+            {
+                logger.LogError(
+                    "Inner exception: {Type}: {Message}",
+                    ex.InnerException.GetType().Name,
+                    ex.InnerException.Message
+                );
+            }
+
             return new SendEmailResponse { Success = false, Error = ex.Message };
         }
     }
