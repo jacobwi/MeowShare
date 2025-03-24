@@ -234,7 +234,7 @@ public partial class EmailService(
             };
 
             // Log connection attempt
-            logger.LogInformation(
+            logger.LogWarning(
                 $"Connecting to {config.SmtpHost}:{config.SmtpPort} using {secureSocketOptions}"
             );
 
