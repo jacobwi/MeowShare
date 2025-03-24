@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import React, { createContext, useState, useEffect, ReactNode } from "react";
 import defaultConfig from "../config/env";
 import { ConfigContextType, defaultConfigContext } from "./types/config";
 import { AppConfig } from "../types";

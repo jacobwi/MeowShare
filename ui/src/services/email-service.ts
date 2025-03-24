@@ -4,7 +4,7 @@ import {
   EmailTemplate,
   EmailConfigSettings,
   SendEmailResponse,
-  TemplateRenderResponse
+  TemplateRenderResponse,
 } from "../types";
 
 // Email service API
@@ -175,4 +175,4 @@ export const emailApi = {
   },
 };
 
-export default emailApi; 
+export default emailApi;

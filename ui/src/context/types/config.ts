@@ -19,4 +19,4 @@ export const defaultConfigContext: ConfigContextType = {
   },
   updateConfig: () => {},
   resetConfig: () => {},
-}; 
+};

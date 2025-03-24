@@ -1,6 +1,6 @@
-import { useContext } from 'react';
-import ConfigContext from '../ConfigContext';
-import { ConfigContextType } from '../types';
+import { useContext } from "react";
+import ConfigContext from "../ConfigContext";
+import { ConfigContextType } from "../types";
 
 /**
  * Custom hook to access the configuration context
@@ -8,7 +8,7 @@ import { ConfigContextType } from '../types';
 export const useConfig = (): ConfigContextType => {
   const context = useContext(ConfigContext);
   if (!context) {
-    throw new Error('useConfig must be used within a ConfigProvider');
+    throw new Error("useConfig must be used within a ConfigProvider");
   }
   return context;
-}; 
+};

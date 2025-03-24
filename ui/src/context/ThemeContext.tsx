@@ -5,10 +5,7 @@ import React, {
   ReactNode,
   useCallback,
 } from "react";
-import {
-  THEME_STORAGE_KEY,
-  getSavedAppearance,
-} from "../constants/theme";
+import { THEME_STORAGE_KEY, getSavedAppearance } from "../constants/theme";
 import { AppearanceSettings } from "../types";
 import { ThemeContextType, defaultThemeContext } from "./types/theme";
 

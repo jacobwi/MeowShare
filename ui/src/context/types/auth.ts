@@ -35,4 +35,4 @@ export const defaultAuthContext: AuthContextType = {
   impersonateUser: async () => {},
   endImpersonation: async () => {},
   getImpersonationStatus: async () => {},
-}; 
+};

@@ -4,7 +4,10 @@
 const appVersion = "0.1.0-prealpha";
 
 // Parse numeric environment variables with fallbacks
-const parseEnvNumber = (envValue: string | undefined, defaultValue: number): number => {
+const parseEnvNumber = (
+  envValue: string | undefined,
+  defaultValue: number,
+): number => {
   if (!envValue) return defaultValue;
   const parsed = parseInt(envValue, 10);
   return isNaN(parsed) ? defaultValue : parsed;
@@ -12,20 +15,20 @@ const parseEnvNumber = (envValue: string | undefined, defaultValue: number): num
 
 // Max file size (100MB default)
 const MAX_FILE_SIZE = parseEnvNumber(
-  import.meta.env.VITE_MAX_FILE_SIZE, 
-  100 * 1024 * 1024
+  import.meta.env.VITE_MAX_FILE_SIZE,
+  100 * 1024 * 1024,
 );
 
 // Chunk size for uploads (5MB default)
 const CHUNK_SIZE = parseEnvNumber(
-  import.meta.env.VITE_CHUNK_SIZE, 
-  5 * 1024 * 1024
+  import.meta.env.VITE_CHUNK_SIZE,
+  5 * 1024 * 1024,
 );
 
 // Default expiration days (7 days default)
 const DEFAULT_EXPIRATION_DAYS = parseEnvNumber(
-  import.meta.env.VITE_DEFAULT_EXPIRATION_DAYS, 
-  7
+  import.meta.env.VITE_DEFAULT_EXPIRATION_DAYS,
+  7,
 );
 
 export const config = {

@@ -11,8 +11,10 @@ import authService from "../services/auth";
  * @returns A cleanup function to clear the timer
  */
 export const setupAuthRefreshTimer = (
-  tokenRefreshTimerRef: React.MutableRefObject<ReturnType<typeof setInterval> | null>,
-  logoutFn: () => Promise<void>
+  tokenRefreshTimerRef: React.MutableRefObject<ReturnType<
+    typeof setInterval
+  > | null>,
+  logoutFn: () => Promise<void>,
 ) => {
   // Clear any existing timer
   if (tokenRefreshTimerRef.current) {
@@ -38,4 +40,4 @@ export const setupAuthRefreshTimer = (
       tokenRefreshTimerRef.current = null;
     }
   };
-}; 
+};

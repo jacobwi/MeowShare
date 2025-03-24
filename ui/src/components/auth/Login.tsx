@@ -17,6 +17,7 @@ import {
   Checkbox,
   FormControlLabel,
   Fade,
+  useTheme,
 } from "@mui/material";
 import {
   Visibility,
@@ -26,7 +27,7 @@ import {
   AdminPanelSettings,
   Email,
 } from "@mui/icons-material";
-import { useAuth, useTheme } from "../../context";
+import { useAuth } from "../../context";
 import config from "../../config/env";
 
 const Login: React.FC = () => {
@@ -42,7 +43,7 @@ const Login: React.FC = () => {
   const [passwordError, setPasswordError] = useState("");
 
   const { login, isAuthenticated } = useAuth();
-  const { mode } = useTheme();
+  const theme = useTheme();
   const navigate = useNavigate();
 
   // Redirect if already logged in
@@ -97,14 +98,13 @@ const Login: React.FC = () => {
       setError("");
       setLoading(true);
       await login(username.trim(), password);
-      
+
       // Save username if remember me is checked
       if (rememberMe) {
         localStorage.setItem("rememberedUsername", username.trim());
       } else {
         localStorage.removeItem("rememberedUsername");
       }
-      
     } catch (err) {
       setError("Failed to login. Please check your credentials.");
       console.error(err);
@@ -133,9 +133,10 @@ const Login: React.FC = () => {
         width: "100%",
         py: 8,
         px: 2,
-        background: mode === 'dark' 
-          ? "linear-gradient(to bottom, rgba(25,25,25,0.8), rgba(50,50,50,0.9))"
-          : "linear-gradient(to bottom, rgba(245,245,245,0.8), rgba(255,255,255,0.9))",
+        background:
+          theme.palette.mode === "dark"
+            ? `linear-gradient(to bottom, ${theme.palette.background.default}, ${theme.palette.background.paper})`
+            : `linear-gradient(to bottom, ${theme.palette.background.default}, ${theme.palette.background.paper})`,
         minHeight: "calc(100vh - 64px)",
       }}
     >
@@ -147,9 +148,10 @@ const Login: React.FC = () => {
               p: { xs: 3, sm: 5 },
               width: "100%",
               borderRadius: 3,
-              boxShadow: mode === 'dark' 
-                ? "0 8px 32px rgba(0,0,0,0.2)" 
-                : "0 8px 32px rgba(0,0,0,0.05)",
+              boxShadow:
+                theme.palette.mode === "dark"
+                  ? `0 8px 32px ${theme.palette.common.black}40`
+                  : `0 8px 32px ${theme.palette.common.black}10`,
               position: "relative",
               overflow: "hidden",
               transform: "translateY(0px)",
@@ -164,9 +166,7 @@ const Login: React.FC = () => {
                 left: 0,
                 right: 0,
                 height: "4px",
-                background: mode === 'dark'
-                  ? "linear-gradient(to right, #3f51b5, #9c27b0)"
-                  : "linear-gradient(to right, #ff9800, #f44336)",
+                background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
               },
             }}
           >
@@ -203,15 +203,15 @@ const Login: React.FC = () => {
                     color="secondary"
                     onClick={handleDemoLogin}
                     startIcon={<AdminPanelSettings />}
-                    sx={{ 
+                    sx={{
                       borderRadius: 2,
-                      px: 3, 
+                      px: 3,
                       py: 1,
-                      textTransform: 'none',
+                      textTransform: "none",
                       borderWidth: 2,
-                      '&:hover': {
-                        borderWidth: 2
-                      }
+                      "&:hover": {
+                        borderWidth: 2,
+                      },
                     }}
                   >
                     Use Demo Admin
@@ -236,16 +236,16 @@ const Login: React.FC = () => {
                 error={!!usernameError}
                 helperText={usernameError}
                 variant="outlined"
-                sx={{ 
+                sx={{
                   mb: 3,
-                  '.MuiOutlinedInput-root': {
-                    borderRadius: 2
-                  }
+                  ".MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                  },
                 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      {username.includes('@') ? (
+                      {username.includes("@") ? (
                         <Email color="action" />
                       ) : (
                         <Person color="action" />
@@ -270,11 +270,11 @@ const Login: React.FC = () => {
                 error={!!passwordError}
                 helperText={passwordError}
                 variant="outlined"
-                sx={{ 
+                sx={{
                   mb: 2,
-                  '.MuiOutlinedInput-root': {
-                    borderRadius: 2
-                  }
+                  ".MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                  },
                 }}
                 InputProps={{
                   startAdornment: (
@@ -295,29 +295,27 @@ const Login: React.FC = () => {
                   ),
                 }}
               />
-              
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                mb: 3 
-              }}>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 3,
+                }}
+              >
                 <FormControlLabel
                   control={
-                    <Checkbox 
-                      checked={rememberMe} 
+                    <Checkbox
+                      checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
                       color="primary"
                       size="small"
                     />
                   }
-                  label={
-                    <Typography variant="body2">
-                      Remember me
-                    </Typography>
-                  }
+                  label={<Typography variant="body2">Remember me</Typography>}
                 />
-                
+
                 <Typography
                   variant="body2"
                   sx={{
@@ -345,13 +343,6 @@ const Login: React.FC = () => {
                 sx={{
                   py: 1.5,
                   mb: 3,
-                  borderRadius: 2,
-                  position: "relative",
-                  fontWeight: 'bold',
-                  boxShadow: 4,
-                  background: mode === 'dark'
-                    ? 'linear-gradient(45deg, #3f51b5 30%, #7986cb 90%)'
-                    : 'linear-gradient(45deg, #f44336 30%, #ff9800 90%)',
                 }}
                 disabled={loading}
               >

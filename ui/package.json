@@ -14,7 +14,11 @@
     "start:demo": "concurrently \"npm run api:demo\" \"npm run dev\"",
     "start:prod": "concurrently \"npm run api\" \"npm run preview\"",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
-    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest watch"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -49,6 +53,7 @@
     "prettier": "^3.5.3",
     "typescript": "~5.8.2",
     "typescript-eslint": "^8.26.1",
-    "vite": "^6.2.2"
+    "vite": "^6.2.2",
+    "vitest": "^3.0.9"
   }
 }

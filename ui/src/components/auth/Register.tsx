@@ -18,7 +18,7 @@ import {
   Step,
   StepLabel,
   Avatar,
-  useTheme as useMuiTheme,
+  useTheme,
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
@@ -32,7 +32,6 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "../../context";
 import config from "../../config/env";
-import { useTheme } from "../../context";
 import { toast } from "react-toastify";
 import emailApi from "../../services/email-service";
 
@@ -57,12 +56,11 @@ const Register: React.FC = () => {
   const [agreeToTermsError, setAgreeToTermsError] = useState("");
 
   const { register, isAuthenticated } = useAuth();
-  const { mode } = useTheme();
-  const muiTheme = useMuiTheme();
+  const theme = useTheme();
   const navigate = useNavigate();
 
   // Registration steps
-  const steps = ['Account Details', 'Password Security', 'Complete'];
+  const steps = ["Account Details", "Password Security", "Complete"];
 
   // Redirect if already logged in
   useEffect(() => {
@@ -138,19 +136,17 @@ const Register: React.FC = () => {
     try {
       // Check if we have a welcome template
       const templates = await emailApi.getTemplates();
-      const welcomeTemplate = templates.find(t => t.name.toLowerCase() === 'welcome');
-      
+      const welcomeTemplate = templates.find(
+        (t) => t.name.toLowerCase() === "welcome",
+      );
+
       if (welcomeTemplate) {
         // Send email with template
-        await emailApi.sendWithTemplate(
-          welcomeTemplate.id,
-          email,
-          {
-            username: username,
-            email: email,
-            loginUrl: `${window.location.origin}/login`
-          }
-        );
+        await emailApi.sendWithTemplate(welcomeTemplate.id, email, {
+          username: username,
+          email: email,
+          loginUrl: `${window.location.origin}/login`,
+        });
       } else {
         // Send a simple welcome email
         await emailApi.sendEmail({
@@ -168,7 +164,7 @@ const Register: React.FC = () => {
               <p>Best regards,<br>${config.APP_NAME} Team</p>
             </div>
           `,
-          isHtml: true
+          isHtml: true,
         });
       }
     } catch (error) {
@@ -188,16 +184,16 @@ const Register: React.FC = () => {
       setError("");
       setLoading(true);
       await register(username.trim(), password, email.trim());
-      
+
       // Try to send welcome email
       await sendWelcomeEmail();
-      
+
       setRegistrationComplete(true);
       setActiveStep(2); // Move to completion step
       toast.success("Account created successfully!");
     } catch (err) {
       setError(
-        "Failed to create account. Username or email may already be in use."
+        "Failed to create account. Username or email may already be in use.",
       );
       console.error(err);
     } finally {
@@ -216,34 +212,34 @@ const Register: React.FC = () => {
   // Password strength indicators
   const getPasswordStrength = (password: string) => {
     if (!password) return { strength: 0, text: "" };
-    
+
     let strength = 0;
     if (password.length >= 8) strength += 1;
     if (/[A-Z]/.test(password)) strength += 1;
     if (/[a-z]/.test(password)) strength += 1;
     if (/[0-9]/.test(password)) strength += 1;
     if (/[^A-Za-z0-9]/.test(password)) strength += 1;
-    
+
     const strengthText = [
       "Very weak",
       "Weak",
       "Fair",
       "Good",
       "Strong",
-      "Very strong"
+      "Very strong",
     ][strength];
-    
+
     return { strength, text: strengthText };
   };
 
   const passwordStrength = getPasswordStrength(password);
   const strengthColor = [
-    "#f44336", // very weak - red
-    "#ff9800", // weak - orange
-    "#ffeb3b", // fair - yellow
-    "#8bc34a", // good - light green
-    "#4caf50", // strong - green
-    "#2e7d32"  // very strong - dark green
+    theme.palette.error.main, // very weak - red
+    theme.palette.warning.main, // weak - orange
+    theme.palette.warning.light, // fair - yellow
+    theme.palette.success.light, // good - light green
+    theme.palette.success.main, // strong - green
+    theme.palette.success.dark, // very strong - dark green
   ][passwordStrength.strength];
 
   const renderStepContent = (step: number) => {
@@ -321,7 +317,12 @@ const Register: React.FC = () => {
                     setPasswordError("");
                 }}
                 error={!!passwordError}
-                helperText={passwordError || (password && passwordStrength.text ? `Password strength: ${passwordStrength.text}` : "")}
+                helperText={
+                  passwordError ||
+                  (password && passwordStrength.text
+                    ? `Password strength: ${passwordStrength.text}`
+                    : "")
+                }
                 variant="outlined"
                 InputProps={{
                   startAdornment: (
@@ -344,26 +345,29 @@ const Register: React.FC = () => {
               />
               {password && (
                 <Box sx={{ mt: 1, mb: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
                     <Box
                       sx={{
                         height: 4,
                         flex: 1,
                         borderRadius: 2,
-                        backgroundColor: muiTheme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-                        position: 'relative',
-                        overflow: 'hidden'
+                        backgroundColor:
+                          theme.palette.mode === "dark"
+                            ? "rgba(255,255,255,0.1)"
+                            : "rgba(0,0,0,0.1)",
+                        position: "relative",
+                        overflow: "hidden",
                       }}
                     >
                       <Box
                         sx={{
-                          position: 'absolute',
+                          position: "absolute",
                           left: 0,
                           top: 0,
                           bottom: 0,
                           width: `${(passwordStrength.strength / 5) * 100}%`,
                           backgroundColor: strengthColor,
-                          transition: 'width 0.3s ease'
+                          transition: "width 0.3s ease",
                         }}
                       />
                     </Box>
@@ -416,8 +420,8 @@ const Register: React.FC = () => {
             <Grid item xs={12}>
               <FormControlLabel
                 control={
-                  <Checkbox 
-                    checked={agreeToTerms} 
+                  <Checkbox
+                    checked={agreeToTerms}
                     onChange={(e) => {
                       setAgreeToTerms(e.target.checked);
                       if (e.target.checked) setAgreeToTermsError("");
@@ -448,14 +452,16 @@ const Register: React.FC = () => {
         );
       case 2:
         return (
-          <Box sx={{ textAlign: 'center', py: 4 }}>
-            <Avatar sx={{ 
-              m: '0 auto', 
-              width: 80, 
-              height: 80, 
-              bgcolor: 'success.main',
-              mb: 2
-            }}>
+          <Box sx={{ textAlign: "center", py: 4 }}>
+            <Avatar
+              sx={{
+                m: "0 auto",
+                width: 80,
+                height: 80,
+                bgcolor: "success.main",
+                mb: 2,
+              }}
+            >
               <CheckCircleOutline sx={{ fontSize: 50 }} />
             </Avatar>
             <Typography variant="h5" gutterBottom>
@@ -463,13 +469,14 @@ const Register: React.FC = () => {
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
               Your account has been created successfully.
-              {email && " We've sent you a welcome email with more information."}
+              {email &&
+                " We've sent you a welcome email with more information."}
             </Typography>
             <Button
               variant="contained"
               color="primary"
               size="large"
-              onClick={() => navigate('/login')}
+              onClick={() => navigate("/login")}
               sx={{ mt: 2 }}
             >
               Go to Login
@@ -490,9 +497,10 @@ const Register: React.FC = () => {
         width: "100%",
         py: 8,
         px: 2,
-        background: mode === 'dark' 
-          ? "linear-gradient(to bottom, rgba(25,25,25,0.8), rgba(50,50,50,0.9))"
-          : "linear-gradient(to bottom, rgba(245,245,245,0.8), rgba(255,255,255,0.9))",
+        background:
+          theme.palette.mode === "dark"
+            ? `linear-gradient(to bottom, ${theme.palette.background.default}, ${theme.palette.background.paper})`
+            : `linear-gradient(to bottom, ${theme.palette.background.default}, ${theme.palette.background.paper})`,
       }}
     >
       <Container maxWidth="md" sx={{ width: "100%" }}>
@@ -502,9 +510,10 @@ const Register: React.FC = () => {
             p: { xs: 3, sm: 5 },
             width: "100%",
             borderRadius: 3,
-            boxShadow: mode === 'dark' 
-              ? "0 8px 32px rgba(0,0,0,0.2)" 
-              : "0 8px 32px rgba(0,0,0,0.05)",
+            boxShadow:
+              theme.palette.mode === "dark"
+                ? `0 8px 32px ${theme.palette.common.black}40`
+                : `0 8px 32px ${theme.palette.common.black}10`,
             position: "relative",
             overflow: "hidden",
             "&::before": {
@@ -514,9 +523,7 @@ const Register: React.FC = () => {
               left: 0,
               right: 0,
               height: "4px",
-              background: mode === 'dark'
-                ? "linear-gradient(to right, #9c27b0, #3f51b5)"
-                : "linear-gradient(to right, #ff9800, #f44336)",
+              background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
             },
           }}
         >
@@ -529,11 +536,7 @@ const Register: React.FC = () => {
             </Typography>
           </Box>
 
-          <Stepper 
-            activeStep={activeStep} 
-            alternativeLabel
-            sx={{ mb: 4 }}
-          >
+          <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
             {steps.map((label) => (
               <Step key={label}>
                 <StepLabel>{label}</StepLabel>
@@ -560,7 +563,9 @@ const Register: React.FC = () => {
             {renderStepContent(activeStep)}
 
             {activeStep !== steps.length - 1 && (
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+              <Box
+                sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}
+              >
                 <Button
                   disabled={activeStep === 0}
                   onClick={handleBack}
@@ -568,14 +573,13 @@ const Register: React.FC = () => {
                 >
                   Back
                 </Button>
-                <Box sx={{ flex: '1 1 auto' }} />
+                <Box sx={{ flex: "1 1 auto" }} />
                 {activeStep === steps.length - 2 ? (
                   <Button
                     type="submit"
                     variant="contained"
                     color="primary"
                     disabled={loading}
-                    sx={{ position: "relative" }}
                   >
                     {loading ? (
                       <>
@@ -586,7 +590,9 @@ const Register: React.FC = () => {
                             color: "primary.light",
                           }}
                         />
-                        <span style={{ opacity: 0.5 }}>Creating Account...</span>
+                        <span style={{ opacity: 0.5 }}>
+                          Creating Account...
+                        </span>
                       </>
                     ) : (
                       "Complete Registration"

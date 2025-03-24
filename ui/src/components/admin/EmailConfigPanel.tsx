@@ -70,7 +70,7 @@ const EmailConfigPanel: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    
+
     if (type === "checkbox") {
       setSettings((prev) => ({ ...prev, [name]: checked }));
     } else if (name === "smtpPort") {
@@ -85,12 +85,12 @@ const EmailConfigPanel: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       setLoading(true);
       setError(null);
       setSuccess(null);
-      
+
       await emailApi.updateEmailConfig(settings);
       setSuccess("Email settings saved successfully");
     } catch (err) {
@@ -111,7 +111,7 @@ const EmailConfigPanel: React.FC = () => {
       setTestLoading(true);
       setError(null);
       setTestResult(null);
-      
+
       const result = await emailApi.testEmailConfig(settings, testEmail);
       setTestResult(result);
     } catch (err) {
@@ -139,7 +139,8 @@ const EmailConfigPanel: React.FC = () => {
           Email Configuration
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Configure the SMTP server settings for sending emails from the application.
+          Configure the SMTP server settings for sending emails from the
+          application.
         </Typography>
 
         {error && (
@@ -308,4 +309,4 @@ const EmailConfigPanel: React.FC = () => {
   );
 };
 
-export default EmailConfigPanel; 
+export default EmailConfigPanel;

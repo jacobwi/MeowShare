@@ -11,12 +11,12 @@ import { CssBaseline, Box, ThemeProvider } from "@mui/material";
 import { Slide } from "react-toastify";
 
 // Context Providers
-import { 
-  AuthProvider, 
-  ConfigProvider, 
-  useConfig, 
+import {
+  AuthProvider,
+  ConfigProvider,
+  useConfig,
   ThemeProvider as CustomThemeProvider,
-  useTheme 
+  useTheme,
 } from "./context";
 
 // Theme
