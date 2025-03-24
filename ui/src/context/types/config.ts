@@ -1,5 +1,5 @@
-import defaultConfig from "../config/env";
-import { AppConfig } from "../types";
+import defaultConfig from "../../config/env";
+import { AppConfig } from "../../types";
 
 // Define the context type
 export interface ConfigContextType {

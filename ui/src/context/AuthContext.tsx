@@ -10,7 +10,7 @@ import {
   AuthContextType,
   AuthProviderProps,
   defaultAuthContext,
-} from "./auth-types";
+} from "./types/auth";
 import authService from "../services/auth";
 import { User, ImpersonationStatus } from "../types";
 

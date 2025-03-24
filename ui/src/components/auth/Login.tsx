@@ -14,6 +14,9 @@ import {
   IconButton,
   CircularProgress,
   Tooltip,
+  Checkbox,
+  FormControlLabel,
+  Fade,
 } from "@mui/material";
 import {
   Visibility,
@@ -21,10 +24,10 @@ import {
   Person,
   LockOutlined,
   AdminPanelSettings,
+  Email,
 } from "@mui/icons-material";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth, useTheme } from "../../context";
 import config from "../../config/env";
-import { toast } from "react-toastify";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -32,12 +35,14 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   // Validation states
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
   const { login, isAuthenticated } = useAuth();
+  const { mode } = useTheme();
   const navigate = useNavigate();
 
   // Redirect if already logged in
@@ -46,6 +51,15 @@ const Login: React.FC = () => {
       navigate("/");
     }
   }, [isAuthenticated, navigate]);
+
+  // Check for stored credentials if remember me was checked previously
+  useEffect(() => {
+    const savedUsername = localStorage.getItem("rememberedUsername");
+    if (savedUsername) {
+      setUsername(savedUsername);
+      setRememberMe(true);
+    }
+  }, []);
 
   const validateForm = () => {
     let isValid = true;
@@ -83,7 +97,14 @@ const Login: React.FC = () => {
       setError("");
       setLoading(true);
       await login(username.trim(), password);
-      toast.success("Successfully logged in!");
+      
+      // Save username if remember me is checked
+      if (rememberMe) {
+        localStorage.setItem("rememberedUsername", username.trim());
+      } else {
+        localStorage.removeItem("rememberedUsername");
+      }
+      
     } catch (err) {
       setError("Failed to login. Please check your credentials.");
       console.error(err);
@@ -112,207 +133,269 @@ const Login: React.FC = () => {
         width: "100%",
         py: 8,
         px: 2,
-        background:
-          "linear-gradient(to bottom, rgba(245,245,245,0.8), rgba(255,255,255,0.9))",
+        background: mode === 'dark' 
+          ? "linear-gradient(to bottom, rgba(25,25,25,0.8), rgba(50,50,50,0.9))"
+          : "linear-gradient(to bottom, rgba(245,245,245,0.8), rgba(255,255,255,0.9))",
+        minHeight: "calc(100vh - 64px)",
       }}
     >
       <Container maxWidth="sm" sx={{ width: "100%" }}>
-        <Paper
-          elevation={2}
-          sx={{
-            p: 5,
-            width: "100%",
-            borderRadius: 2,
-            boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
-            position: "relative",
-            overflow: "hidden",
-            "&::before": {
-              content: '""',
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: "4px",
-              background: "linear-gradient(to right, #000000, #333333)",
-            },
-          }}
-        >
-          <Box sx={{ textAlign: "center", mb: 4 }}>
-            <Typography component="h1" variant="h4" fontWeight="600" mb={1}>
-              Welcome Back 🐱
-            </Typography>
-            <Typography color="text.secondary" variant="body1">
-              Sign in to continue to {config.APP_NAME}
-            </Typography>
-          </Box>
-
-          {error && (
-            <Alert
-              severity="error"
-              sx={{
-                mb: 3,
-                borderRadius: 1,
-                "& .MuiAlert-icon": {
-                  alignItems: "center",
-                },
-              }}
-            >
-              {error}
-            </Alert>
-          )}
-
-          {/* Demo Mode Button */}
-          {config.DEMO_MODE && (
-            <Box sx={{ mb: 3, textAlign: "center" }}>
-              <Tooltip title="Prefill with demo admin credentials">
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={handleDemoLogin}
-                  startIcon={<AdminPanelSettings />}
-                  sx={{ borderRadius: 1.5 }}
-                >
-                  Use Demo Admin
-                </Button>
-              </Tooltip>
-            </Box>
-          )}
-
-          <Box component="form" onSubmit={handleSubmit} noValidate>
-            <TextField
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
-              autoFocus
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-                if (e.target.value.trim()) setUsernameError("");
-              }}
-              error={!!usernameError}
-              helperText={usernameError}
-              variant="outlined"
-              sx={{ mb: 3 }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Person color="action" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <TextField
-              fullWidth
-              name="password"
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (e.target.value) setPasswordError("");
-              }}
-              error={!!passwordError}
-              helperText={passwordError}
-              variant="outlined"
-              sx={{ mb: 4 }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlined color="action" />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleTogglePasswordVisibility}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              size="large"
-              sx={{
-                py: 1.5,
-                mb: 2,
-                borderRadius: 1.5,
-                position: "relative",
-              }}
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <CircularProgress
-                    size={24}
-                    sx={{
-                      position: "absolute",
-                      color: "primary.light",
-                    }}
-                  />
-                  <span style={{ opacity: 0.5 }}>Signing in...</span>
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </Button>
-
-            <Typography
-              variant="body2"
-              textAlign="right"
-              sx={{
-                mb: 3,
-                "& a": {
-                  color: "primary.main",
-                  textDecoration: "none",
-                  fontWeight: 500,
-                  "&:hover": {
-                    textDecoration: "underline",
-                  },
-                },
-              }}
-            >
-              <Link component={RouterLink} to="/forgot-password">
-                Forgot password?
-              </Link>
-            </Typography>
-
-            <Divider sx={{ my: 3 }}>
-              <Typography variant="body2" color="text.secondary">
-                OR
+        <Fade in={true} timeout={800}>
+          <Paper
+            elevation={4}
+            sx={{
+              p: { xs: 3, sm: 5 },
+              width: "100%",
+              borderRadius: 3,
+              boxShadow: mode === 'dark' 
+                ? "0 8px 32px rgba(0,0,0,0.2)" 
+                : "0 8px 32px rgba(0,0,0,0.05)",
+              position: "relative",
+              overflow: "hidden",
+              transform: "translateY(0px)",
+              transition: "transform 0.3s ease-in-out",
+              "&:hover": {
+                transform: "translateY(-5px)",
+              },
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "4px",
+                background: mode === 'dark'
+                  ? "linear-gradient(to right, #3f51b5, #9c27b0)"
+                  : "linear-gradient(to right, #ff9800, #f44336)",
+              },
+            }}
+          >
+            <Box sx={{ textAlign: "center", mb: 4 }}>
+              <Typography component="h1" variant="h4" fontWeight="bold" mb={1}>
+                Welcome Back 🐱
               </Typography>
-            </Divider>
+              <Typography color="text.secondary" variant="body1">
+                Sign in to continue to {config.APP_NAME}
+              </Typography>
+            </Box>
 
-            <Typography variant="body2" textAlign="center" sx={{ mt: 2 }}>
-              Don't have an account?{" "}
-              <Link
-                component={RouterLink}
-                to="/register"
+            {error && (
+              <Alert
+                severity="error"
                 sx={{
-                  fontWeight: 600,
-                  textDecoration: "none",
-                  "&:hover": {
-                    textDecoration: "underline",
+                  mb: 3,
+                  borderRadius: 2,
+                  "& .MuiAlert-icon": {
+                    alignItems: "center",
                   },
                 }}
               >
-                Sign Up
-              </Link>
-            </Typography>
-          </Box>
-        </Paper>
+                {error}
+              </Alert>
+            )}
+
+            {/* Demo Mode Button */}
+            {config.DEMO_MODE && (
+              <Box sx={{ mb: 3, textAlign: "center" }}>
+                <Tooltip title="Prefill with demo admin credentials">
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleDemoLogin}
+                    startIcon={<AdminPanelSettings />}
+                    sx={{ 
+                      borderRadius: 2,
+                      px: 3, 
+                      py: 1,
+                      textTransform: 'none',
+                      borderWidth: 2,
+                      '&:hover': {
+                        borderWidth: 2
+                      }
+                    }}
+                  >
+                    Use Demo Admin
+                  </Button>
+                </Tooltip>
+              </Box>
+            )}
+
+            <Box component="form" onSubmit={handleSubmit} noValidate>
+              <TextField
+                fullWidth
+                id="username"
+                label="Username or Email"
+                name="username"
+                autoComplete="username"
+                autoFocus
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  if (e.target.value.trim()) setUsernameError("");
+                }}
+                error={!!usernameError}
+                helperText={usernameError}
+                variant="outlined"
+                sx={{ 
+                  mb: 3,
+                  '.MuiOutlinedInput-root': {
+                    borderRadius: 2
+                  }
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {username.includes('@') ? (
+                        <Email color="action" />
+                      ) : (
+                        <Person color="action" />
+                      )}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <TextField
+                fullWidth
+                name="password"
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                id="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (e.target.value) setPasswordError("");
+                }}
+                error={!!passwordError}
+                helperText={passwordError}
+                variant="outlined"
+                sx={{ 
+                  mb: 2,
+                  '.MuiOutlinedInput-root': {
+                    borderRadius: 2
+                  }
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LockOutlined color="action" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleTogglePasswordVisibility}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                mb: 3 
+              }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox 
+                      checked={rememberMe} 
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      color="primary"
+                      size="small"
+                    />
+                  }
+                  label={
+                    <Typography variant="body2">
+                      Remember me
+                    </Typography>
+                  }
+                />
+                
+                <Typography
+                  variant="body2"
+                  sx={{
+                    "& a": {
+                      color: "primary.main",
+                      textDecoration: "none",
+                      fontWeight: 500,
+                      "&:hover": {
+                        textDecoration: "underline",
+                      },
+                    },
+                  }}
+                >
+                  <Link component={RouterLink} to="/forgot-password">
+                    Forgot password?
+                  </Link>
+                </Typography>
+              </Box>
+
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                sx={{
+                  py: 1.5,
+                  mb: 3,
+                  borderRadius: 2,
+                  position: "relative",
+                  fontWeight: 'bold',
+                  boxShadow: 4,
+                  background: mode === 'dark'
+                    ? 'linear-gradient(45deg, #3f51b5 30%, #7986cb 90%)'
+                    : 'linear-gradient(45deg, #f44336 30%, #ff9800 90%)',
+                }}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <CircularProgress
+                      size={24}
+                      sx={{
+                        position: "absolute",
+                        color: "primary.light",
+                      }}
+                    />
+                    <span style={{ opacity: 0.5 }}>Signing in...</span>
+                  </>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+
+              <Divider sx={{ my: 3 }}>
+                <Typography variant="body2" color="text.secondary">
+                  OR
+                </Typography>
+              </Divider>
+
+              <Typography variant="body2" textAlign="center" sx={{ mt: 2 }}>
+                Don't have an account?{" "}
+                <Link
+                  component={RouterLink}
+                  to="/register"
+                  sx={{
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    "&:hover": {
+                      textDecoration: "underline",
+                    },
+                  }}
+                >
+                  Sign Up
+                </Link>
+              </Typography>
+            </Box>
+          </Paper>
+        </Fade>
       </Container>
     </Box>
   );

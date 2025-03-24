@@ -1,4 +1,4 @@
-import { AppearanceSettings } from "../../types";
+import { AppearanceSettings, ThemeMode, FontSize } from "../../types";
 
 export interface ThemeContextType extends AppearanceSettings {
   toggleTheme: () => void;
@@ -10,3 +10,20 @@ export interface ThemeContextType extends AppearanceSettings {
   setLanguage: (language: string) => void;
   updateAppearance: (settings: Partial<AppearanceSettings>) => void;
 }
+
+export const defaultThemeContext: ThemeContextType = {
+  mode: "light" as ThemeMode,
+  fontSize: "medium" as FontSize,
+  compactMode: false,
+  showProfileInfo: true,
+  shareActivity: false,
+  language: "English",
+  toggleTheme: () => {},
+  setMode: () => {},
+  setFontSize: () => {},
+  setCompactMode: () => {},
+  setShowProfileInfo: () => {},
+  setShareActivity: () => {},
+  setLanguage: () => {},
+  updateAppearance: () => {},
+};

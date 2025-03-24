@@ -7,11 +7,10 @@ import React, {
 } from "react";
 import {
   THEME_STORAGE_KEY,
-  defaultThemeContext,
   getSavedAppearance,
 } from "../constants/theme";
 import { AppearanceSettings } from "../types";
-import { ThemeContextType } from "./types/theme";
+import { ThemeContextType, defaultThemeContext } from "./types/theme";
 
 const ThemeContext = createContext<ThemeContextType>(defaultThemeContext);
 

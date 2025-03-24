@@ -1,23 +1,6 @@
-import { ThemeMode, FontSize, AppearanceSettings } from "../types";
+import { ThemeMode, AppearanceSettings } from "../types";
 
 export const THEME_STORAGE_KEY = "meowshare-appearance-settings";
-
-export const defaultThemeContext = {
-  mode: "light" as ThemeMode,
-  fontSize: "medium" as FontSize,
-  compactMode: false,
-  showProfileInfo: true,
-  shareActivity: false,
-  language: "English",
-  toggleTheme: () => {},
-  setMode: () => {},
-  setFontSize: () => {},
-  setCompactMode: () => {},
-  setShowProfileInfo: () => {},
-  setShareActivity: () => {},
-  setLanguage: () => {},
-  updateAppearance: () => {},
-};
 
 // Helper to get system theme preference
 export const getSystemThemePreference = (): ThemeMode => {

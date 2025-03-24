@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { User, ImpersonationStatus } from "../types";
+import { User, ImpersonationStatus } from "../../types";
 
 export interface AuthContextType {
   user: User | null;
@@ -35,4 +35,4 @@ export const defaultAuthContext: AuthContextType = {
   impersonateUser: async () => {},
   endImpersonation: async () => {},
   getImpersonationStatus: async () => {},
-};
+}; 

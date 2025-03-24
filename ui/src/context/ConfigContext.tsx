@@ -5,7 +5,7 @@ import React, {
   ReactNode,
 } from "react";
 import defaultConfig from "../config/env";
-import { ConfigContextType, defaultConfigContext } from "./config-types";
+import { ConfigContextType, defaultConfigContext } from "./types/config";
 import { AppConfig } from "../types";
 
 // Create the context
