@@ -19,7 +19,8 @@ public class EmailConfigRepository : IEmailConfigRepository
         var dataPath = configuration["DataStorage:Path"] ?? "App_Data";
         var emailConfigDir = Path.Combine(dataPath, "EmailConfig");
 
-        if (!Directory.Exists(emailConfigDir)) Directory.CreateDirectory(emailConfigDir);
+        if (!Directory.Exists(emailConfigDir))
+            Directory.CreateDirectory(emailConfigDir);
 
         _configFilePath = Path.Combine(emailConfigDir, "config.json");
     }
@@ -28,7 +29,8 @@ public class EmailConfigRepository : IEmailConfigRepository
     {
         // Check for environment variables or configuration first
         var envConfig = GetConfigFromEnvironment();
-        if (envConfig != null) return envConfig;
+        if (envConfig != null)
+            return envConfig;
 
         // If no env config, try to read from file
         if (!File.Exists(_configFilePath))
@@ -41,7 +43,7 @@ public class EmailConfigRepository : IEmailConfigRepository
                 SmtpPassword = "",
                 SmtpFromEmail = "noreply@example.com",
                 SmtpFromName = "MeowShare",
-                EnableSsl = true
+                EnableSsl = true,
             };
 
         var json = await File.ReadAllTextAsync(_configFilePath);
@@ -66,18 +68,23 @@ public class EmailConfigRepository : IEmailConfigRepository
     {
         // Check if environment variables or configuration section exists
         var host = _configuration["EmailConfig:SmtpHost"];
-        if (string.IsNullOrEmpty(host)) return null;
+        if (string.IsNullOrEmpty(host))
+            return null;
 
         // Parse all email settings from configuration
         return new EmailConfigSettings
         {
             SmtpHost = host,
-            SmtpPort = int.TryParse(_configuration["EmailConfig:SmtpPort"], out var port) ? port : 587,
+            SmtpPort = int.TryParse(_configuration["EmailConfig:SmtpPort"], out var port)
+                ? port
+                : 587,
             SmtpUser = _configuration["EmailConfig:SmtpUser"] ?? "",
             SmtpPassword = _configuration["EmailConfig:SmtpPassword"] ?? "",
             SmtpFromEmail = _configuration["EmailConfig:SmtpFromEmail"] ?? "noreply@example.com",
             SmtpFromName = _configuration["EmailConfig:SmtpFromName"] ?? "MeowShare",
-            EnableSsl = bool.TryParse(_configuration["EmailConfig:EnableSsl"], out var ssl) ? ssl : true
+            EnableSsl = bool.TryParse(_configuration["EmailConfig:EnableSsl"], out var ssl)
+                ? ssl
+                : true,
         };
     }
 }
