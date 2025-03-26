@@ -93,7 +93,23 @@ const AdminPanel: React.FC = () => {
           variant="h4"
           component="h1"
           gutterBottom
-          sx={{ mb: 3, fontWeight: 600 }}
+          fontWeight="bold"
+          sx={{
+            textAlign: { xs: "center", sm: "left" },
+            mb: 3,
+            position: "relative",
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              bottom: -8,
+              left: { xs: "50%", sm: 0 },
+              transform: { xs: "translateX(-50%)", sm: "none" },
+              width: { xs: "80px", sm: "100px" },
+              height: "4px",
+              bgcolor: "primary.main",
+              borderRadius: "2px",
+            },
+          }}
         >
           Admin Panel
         </Typography>

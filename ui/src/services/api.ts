@@ -4,6 +4,14 @@ import axios, {
   AxiosError,
 } from "axios";
 import debugInterceptor from "../utils/DebugInterceptor";
+import authService from "./auth";
+
+// Extend InternalAxiosRequestConfig to include _retry property
+declare module "axios" {
+  export interface InternalAxiosRequestConfig {
+    _retry?: boolean;
+  }
+}
 
 // Create axios instance with default config
 const api: AxiosInstance = axios.create({
@@ -35,12 +43,34 @@ api.interceptors.request.use(
 // Response interceptor for handling errors
 api.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      // Just remove the token and let the routing system handle redirects
+  async (error: AxiosError) => {
+    const originalRequest = error.config;
+
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        // Attempt to refresh the token
+        const user = await authService.refreshToken();
+        if (user) {
+          // Retry the original request
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        console.error("Token refresh failed:", refreshError);
+      }
+
+      // If refresh failed or no refresh token available, clear auth and let routing handle it
       localStorage.removeItem("token");
-      // Do not redirect here - let the ProtectedRoute component handle that
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("tokenExpiry");
     }
+
     return Promise.reject(error);
   },
 );

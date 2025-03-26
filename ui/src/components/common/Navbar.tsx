@@ -15,8 +15,9 @@ import {
   ListItemIcon,
   Tooltip,
   Chip,
+  Fade,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useConfig } from "../../context/ConfigContext";
 import { useTheme as useMuiTheme } from "@mui/material/styles";
@@ -43,6 +44,7 @@ const Navbar: React.FC = () => {
     useAuth();
   const { config } = useConfig();
   const navigate = useNavigate();
+  const location = useLocation();
   const muiTheme = useMuiTheme();
   const { mode, toggleTheme } = useCustomTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
@@ -58,14 +60,7 @@ const Navbar: React.FC = () => {
   // Check if debug mode is enabled
   useEffect(() => {
     setIsDebugMode(config.DEBUG_MODE as boolean);
-    // Log to verify config values
-    // console.log("Config values:", {
-    //   appName: config.APP_NAME,
-    //   appVersion: config.APP_VERSION,
-    //   envVersion: defaultEnvConfig.APP_VERSION,
-    //   debugMode: config.DEBUG_MODE,
-    // });
-  }, [config.DEBUG_MODE, config.APP_NAME, config.APP_VERSION]);
+  }, [config.DEBUG_MODE]);
 
   // Reset menu state whenever authenticated state changes
   useEffect(() => {
@@ -110,6 +105,53 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const isActive = (path: string) => {
+    if (path === "/") {
+      return location.pathname === path;
+    }
+    return location.pathname.startsWith(path);
+  };
+
+  const NavButton: React.FC<{
+    to: string;
+    icon: React.ReactNode;
+    label: string;
+  }> = ({ to, icon, label }) => (
+    <Button
+      component={Link}
+      to={to}
+      startIcon={icon}
+      sx={{
+        fontSize: "0.875rem",
+        textTransform: "none",
+        fontWeight: 500,
+        color: isActive(to) ? "primary.main" : "text.primary",
+        opacity: isActive(to) ? 1 : 0.85,
+        position: "relative",
+        "&:hover": {
+          opacity: 1,
+          bgcolor: "transparent",
+        },
+        "&::after": {
+          content: '""',
+          position: "absolute",
+          bottom: -4,
+          left: 0,
+          width: "100%",
+          height: 2,
+          bgcolor: "primary.main",
+          transform: isActive(to) ? "scaleX(1)" : "scaleX(0)",
+          transition: "transform 0.2s ease-in-out",
+        },
+        "&:hover::after": {
+          transform: "scaleX(0.5)",
+        },
+      }}
+    >
+      {label}
+    </Button>
+  );
+
   return (
     <AppBar
       position="sticky"
@@ -139,6 +181,10 @@ const Navbar: React.FC = () => {
               display: "flex",
               alignItems: "center",
               letterSpacing: "-0.5px",
+              transition: "color 0.2s ease-in-out",
+              "&:hover": {
+                color: "primary.main",
+              },
             }}
           >
             {config.APP_NAME || defaultEnvConfig.APP_NAME}
@@ -182,20 +228,28 @@ const Navbar: React.FC = () => {
                 fontWeight: 500,
                 "& .MuiChip-icon": { ml: 0.5 },
                 cursor: "pointer",
+                transition: "all 0.2s ease-in-out",
+                "&:hover": {
+                  transform: "translateY(-1px)",
+                  boxShadow: 1,
+                },
               }}
             />
           )}
 
-          {/* Theme Toggle Button - visible on both mobile and desktop */}
+          {/* Theme Toggle Button */}
           <Tooltip
             title={`Switch to ${mode === "light" ? "dark" : "light"} mode`}
+            TransitionComponent={Fade}
           >
             <IconButton
               onClick={toggleTheme}
               color="inherit"
               sx={{
                 mr: 1,
+                transition: "all 0.2s ease-in-out",
                 "&:hover": {
+                  transform: "rotate(180deg)",
                   bgcolor:
                     mode === "dark"
                       ? "rgba(255, 255, 255, 0.08)"
@@ -231,24 +285,34 @@ const Navbar: React.FC = () => {
                     borderRadius: 1,
                     border: "1px solid",
                     borderColor: "divider",
+                    minWidth: 200,
                   },
                 }}
               >
                 {isAuthenticated ? (
                   <>
-                    <MenuItem onClick={() => handleNavigation("/dashboard")}>
+                    <MenuItem
+                      onClick={() => handleNavigation("/dashboard")}
+                      selected={isActive("/dashboard")}
+                    >
                       <ListItemIcon>
                         <Dashboard fontSize="small" />
                       </ListItemIcon>
                       Dashboard
                     </MenuItem>
-                    <MenuItem onClick={() => handleNavigation("/upload")}>
+                    <MenuItem
+                      onClick={() => handleNavigation("/upload")}
+                      selected={isActive("/upload")}
+                    >
                       <ListItemIcon>
                         <CloudUpload fontSize="small" />
                       </ListItemIcon>
                       Upload
                     </MenuItem>
-                    <MenuItem onClick={() => handleNavigation("/my-files")}>
+                    <MenuItem
+                      onClick={() => handleNavigation("/my-files")}
+                      selected={isActive("/my-files")}
+                    >
                       <ListItemIcon>
                         <Folder fontSize="small" />
                       </ListItemIcon>
@@ -258,7 +322,10 @@ const Navbar: React.FC = () => {
                     {isAdmin && (
                       <>
                         <Divider />
-                        <MenuItem onClick={() => handleNavigation("/admin")}>
+                        <MenuItem
+                          onClick={() => handleNavigation("/admin")}
+                          selected={isActive("/admin")}
+                        >
                           <ListItemIcon>
                             <AdminPanelSettings fontSize="small" />
                           </ListItemIcon>
@@ -270,7 +337,10 @@ const Navbar: React.FC = () => {
                     {isDebugMode && (
                       <>
                         <Divider />
-                        <MenuItem onClick={() => handleNavigation("/debug")}>
+                        <MenuItem
+                          onClick={() => handleNavigation("/debug")}
+                          selected={isActive("/debug")}
+                        >
                           <ListItemIcon>
                             <BugReport fontSize="small" />
                           </ListItemIcon>
@@ -301,13 +371,19 @@ const Navbar: React.FC = () => {
                         </Typography>
                       </Box>
                     </Box>
-                    <MenuItem onClick={() => handleNavigation("/profile")}>
+                    <MenuItem
+                      onClick={() => handleNavigation("/profile")}
+                      selected={isActive("/profile")}
+                    >
                       <ListItemIcon>
                         <Person fontSize="small" />
                       </ListItemIcon>
                       Profile
                     </MenuItem>
-                    <MenuItem onClick={() => handleNavigation("/settings")}>
+                    <MenuItem
+                      onClick={() => handleNavigation("/settings")}
+                      selected={isActive("/settings")}
+                    >
                       <ListItemIcon>
                         <Settings fontSize="small" />
                       </ListItemIcon>
@@ -330,10 +406,16 @@ const Navbar: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <MenuItem onClick={() => handleNavigation("/login")}>
+                    <MenuItem
+                      onClick={() => handleNavigation("/login")}
+                      selected={isActive("/login")}
+                    >
                       Login
                     </MenuItem>
-                    <MenuItem onClick={() => handleNavigation("/register")}>
+                    <MenuItem
+                      onClick={() => handleNavigation("/register")}
+                      selected={isActive("/register")}
+                    >
                       Register
                     </MenuItem>
                   </>
@@ -344,82 +426,33 @@ const Navbar: React.FC = () => {
             <>
               {isAuthenticated ? (
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <Box sx={{ display: "flex" }}>
-                    <Button
-                      color="inherit"
-                      component={Link}
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <NavButton
                       to="/dashboard"
-                      sx={{
-                        fontSize: "0.875rem",
-                        textTransform: "none",
-                        fontWeight: 500,
-                        opacity: 0.85,
-                        "&:hover": { opacity: 1, bgcolor: "transparent" },
-                      }}
-                    >
-                      Dashboard
-                    </Button>
-                    <Button
-                      color="inherit"
-                      component={Link}
+                      icon={<Dashboard />}
+                      label="Dashboard"
+                    />
+                    <NavButton
                       to="/upload"
-                      sx={{
-                        fontSize: "0.875rem",
-                        textTransform: "none",
-                        fontWeight: 500,
-                        opacity: 0.85,
-                        "&:hover": { opacity: 1, bgcolor: "transparent" },
-                      }}
-                    >
-                      Upload
-                    </Button>
-                    <Button
-                      color="inherit"
-                      component={Link}
-                      to="/my-files"
-                      sx={{
-                        fontSize: "0.875rem",
-                        textTransform: "none",
-                        fontWeight: 500,
-                        opacity: 0.85,
-                        "&:hover": { opacity: 1, bgcolor: "transparent" },
-                      }}
-                    >
-                      Files
-                    </Button>
+                      icon={<CloudUpload />}
+                      label="Upload"
+                    />
+                    <NavButton to="/my-files" icon={<Folder />} label="Files" />
 
                     {isAdmin && (
-                      <Button
-                        color="inherit"
-                        component={Link}
+                      <NavButton
                         to="/admin"
-                        sx={{
-                          fontSize: "0.875rem",
-                          textTransform: "none",
-                          fontWeight: 500,
-                          opacity: 0.85,
-                          "&:hover": { opacity: 1, bgcolor: "transparent" },
-                        }}
-                      >
-                        Admin
-                      </Button>
+                        icon={<AdminPanelSettings />}
+                        label="Admin"
+                      />
                     )}
 
                     {isDebugMode && (
-                      <Button
-                        color="inherit"
-                        component={Link}
+                      <NavButton
                         to="/debug"
-                        sx={{
-                          fontSize: "0.875rem",
-                          textTransform: "none",
-                          fontWeight: 500,
-                          opacity: 0.85,
-                          "&:hover": { opacity: 1, bgcolor: "transparent" },
-                        }}
-                      >
-                        Debug
-                      </Button>
+                        icon={<BugReport />}
+                        label="Debug"
+                      />
                     )}
                   </Box>
 
@@ -446,6 +479,7 @@ const Navbar: React.FC = () => {
                             mode === "dark"
                               ? "rgba(255, 255, 255, 0.05)"
                               : "rgba(0, 0, 0, 0.03)",
+                          transform: "scale(1.05)",
                         },
                       }}
                     >
@@ -502,13 +536,19 @@ const Navbar: React.FC = () => {
                         </Typography>
                       </Box>
                       <Divider />
-                      <MenuItem onClick={() => handleNavigation("/profile")}>
+                      <MenuItem
+                        onClick={() => handleNavigation("/profile")}
+                        selected={isActive("/profile")}
+                      >
                         <ListItemIcon>
                           <Person fontSize="small" />
                         </ListItemIcon>
                         Profile
                       </MenuItem>
-                      <MenuItem onClick={() => handleNavigation("/settings")}>
+                      <MenuItem
+                        onClick={() => handleNavigation("/settings")}
+                        selected={isActive("/settings")}
+                      >
                         <ListItemIcon>
                           <Settings fontSize="small" />
                         </ListItemIcon>
@@ -535,7 +575,6 @@ const Navbar: React.FC = () => {
               ) : (
                 <>
                   <Button
-                    color="inherit"
                     component={Link}
                     to="/login"
                     variant="text"
@@ -545,7 +584,12 @@ const Navbar: React.FC = () => {
                       textTransform: "none",
                       fontWeight: 600,
                       opacity: 0.9,
-                      "&:hover": { opacity: 1, bgcolor: "transparent" },
+                      transition: "all 0.2s ease-in-out",
+                      "&:hover": {
+                        opacity: 1,
+                        bgcolor: "transparent",
+                        transform: "translateY(-1px)",
+                      },
                     }}
                   >
                     Log in
@@ -560,7 +604,11 @@ const Navbar: React.FC = () => {
                       textTransform: "none",
                       fontWeight: 600,
                       boxShadow: "none",
-                      "&:hover": { boxShadow: "none" },
+                      transition: "all 0.2s ease-in-out",
+                      "&:hover": {
+                        boxShadow: "none",
+                        transform: "translateY(-1px)",
+                      },
                     }}
                   >
                     Sign up

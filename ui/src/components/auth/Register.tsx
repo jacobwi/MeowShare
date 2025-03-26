@@ -599,10 +599,7 @@ const Register: React.FC = () => {
                     )}
                   </Button>
                 ) : (
-                  <Button
-                    variant="contained"
-                    onClick={handleNext}
-                  >
+                  <Button variant="contained" onClick={handleNext}>
                     Next
                   </Button>
                 )}

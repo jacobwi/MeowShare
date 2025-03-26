@@ -19,7 +19,10 @@ export const authService = {
     });
 
     if (response.data.token) {
-      return authService.handleAuthSuccess(response.data.token);
+      return authService.handleAuthSuccess(
+        response.data.token,
+        response.data.refreshToken,
+      );
     }
 
     throw new Error("Login failed");
@@ -30,7 +33,18 @@ export const authService = {
     password: string,
     email: string,
   ): Promise<void> => {
-    await apiClient.post(`/auth/register`, { username, password, email });
+    const response = await apiClient.post(`/auth/register`, {
+      username,
+      password,
+      email,
+    });
+
+    if (response.data.token) {
+      authService.handleAuthSuccess(
+        response.data.token,
+        response.data.refreshToken,
+      );
+    }
   },
 
   logout: (): void => {
@@ -59,8 +73,11 @@ export const authService = {
     }
   },
 
-  handleAuthSuccess: (token: string): User => {
+  handleAuthSuccess: (token: string, refreshToken?: string): User => {
     localStorage.setItem("token", token);
+    if (refreshToken) {
+      localStorage.setItem("refreshToken", refreshToken);
+    }
 
     const decoded = jwtDecode<TokenPayload>(token);
     const user: User = {

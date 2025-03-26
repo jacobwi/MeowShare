@@ -342,217 +342,236 @@ const FileList: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          My Files
-        </Typography>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Typography
+        variant="h4"
+        component="h1"
+        gutterBottom
+        fontWeight="bold"
+        sx={{
+          textAlign: { xs: "center", sm: "left" },
+          mb: 3,
+          position: "relative",
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            bottom: -8,
+            left: { xs: "50%", sm: 0 },
+            transform: { xs: "translateX(-50%)", sm: "none" },
+            width: { xs: "80px", sm: "100px" },
+            height: "4px",
+            bgcolor: "primary.main",
+            borderRadius: "2px",
+          },
+        }}
+      >
+        My Files
+      </Typography>
 
-        <Box sx={{ mb: 3, display: "flex", alignItems: "center" }}>
-          <TextField
-            label="Search by tags"
-            placeholder="Enter tags separated by commas"
-            variant="outlined"
-            size="small"
-            fullWidth
-            value={searchTags}
-            onChange={(e) => setSearchTags(e.target.value)}
-            onKeyPress={handleKeyPress}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={handleSearch} size="small">
-                    <Search />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Box>
-
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
-
-        {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
-            <CircularProgress />
-          </Box>
-        ) : files.length === 0 ? (
-          <Paper sx={{ p: 3, textAlign: "center" }}>
-            <Typography variant="body1">
-              You don't have any files yet. Upload your first file!
-            </Typography>
-          </Paper>
-        ) : (
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>File Name</TableCell>
-                  <TableCell>Created</TableCell>
-                  <TableCell>Tags</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Downloads</TableCell>
-                  <TableCell align="right">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {files.map((file) => (
-                  <TableRow key={file.id}>
-                    <TableCell>
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        {file.fileName}
-                        {file.password && (
-                          <Tooltip title="Password protected">
-                            <LockOutlined
-                              fontSize="small"
-                              sx={{ ml: 1, color: "text.secondary" }}
-                            />
-                          </Tooltip>
-                        )}
-                        {file.expiresAt && (
-                          <Tooltip
-                            title={`Expires at ${formatDate(file.expiresAt)}`}
-                          >
-                            <AccessTimeOutlined
-                              fontSize="small"
-                              sx={{ ml: 1, color: "text.secondary" }}
-                            />
-                          </Tooltip>
-                        )}
-                      </Box>
-                      {file.customUrl && (
-                        <Typography variant="caption" color="textSecondary">
-                          Custom URL: {file.customUrl}
-                        </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell>{formatDate(file.createdAt)}</TableCell>
-                    <TableCell>
-                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                        {file.tags.map((tag, index) => (
-                          <Chip
-                            key={index}
-                            label={tag}
-                            size="small"
-                            variant="outlined"
-                          />
-                        ))}
-                        {file.tags.length === 0 && (
-                          <Typography variant="caption" color="textSecondary">
-                            No tags
-                          </Typography>
-                        )}
-                      </Box>
-                    </TableCell>
-                    <TableCell>{getFileStatus(file)}</TableCell>
-                    <TableCell>
-                      {file.currentDownloads}{" "}
-                      {file.maxDownloads ? `/ ${file.maxDownloads}` : ""}
-                    </TableCell>
-                    <TableCell align="right">
-                      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Tooltip title="Download">
-                          <IconButton
-                            onClick={() => handleDownload(file)}
-                            disabled={
-                              isExpired(file) || isDownloadLimitReached(file)
-                            }
-                          >
-                            <GetAppOutlined />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Copy Link">
-                          <IconButton onClick={() => handleCopyLink(file)}>
-                            <ContentCopyOutlined />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Open Details">
-                          <IconButton onClick={() => navigateToDetail(file.id)}>
-                            <OpenInNew />
-                          </IconButton>
-                        </Tooltip>
-                        {isViewableFile(file.fileName) && (
-                          <Tooltip title="View">
-                            <IconButton onClick={() => handleViewFile(file)}>
-                              <VisibilityOutlined />
-                            </IconButton>
-                          </Tooltip>
-                        )}
-                        <Tooltip title="Delete">
-                          <IconButton onClick={() => confirmDelete(file.id)}>
-                            <DeleteOutline />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-
-        {/* Password Dialog */}
-        <Dialog
-          open={passwordDialogOpen}
-          onClose={() => setPasswordDialogOpen(false)}
-        >
-          <DialogTitle>Enter Password</DialogTitle>
-          <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Password"
-              type="password"
-              fullWidth
-              variant="outlined"
-              value={downloadPassword}
-              onChange={(e) => setDownloadPassword(e.target.value)}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setPasswordDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handlePasswordSubmit} variant="contained">
-              {viewActionType === "view" ? "View" : "Download"}
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* Delete Confirmation Dialog */}
-        <Dialog
-          open={deleteDialogOpen}
-          onClose={() => setDeleteDialogOpen(false)}
-        >
-          <DialogTitle>Confirm Deletion</DialogTitle>
-          <DialogContent>
-            <Typography>
-              Are you sure you want to delete this file? This action cannot be
-              undone.
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleDelete} color="error" variant="contained">
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* File Content Viewer */}
-        <FileContentViewer
-          open={viewerOpen}
-          onClose={() => setViewerOpen(false)}
-          fileId={selectedFile?.id || ""}
-          fileName={selectedFile?.fileName || ""}
-          fileContent={fileContent}
-          loading={contentLoading}
-          error={contentError}
+      <Box sx={{ mb: 3, display: "flex", alignItems: "center" }}>
+        <TextField
+          label="Search by tags"
+          placeholder="Enter tags separated by commas"
+          variant="outlined"
+          size="small"
+          fullWidth
+          value={searchTags}
+          onChange={(e) => setSearchTags(e.target.value)}
+          onKeyPress={handleKeyPress}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={handleSearch} size="small">
+                  <Search />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
       </Box>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+          <CircularProgress />
+        </Box>
+      ) : files.length === 0 ? (
+        <Paper sx={{ p: 3, textAlign: "center" }}>
+          <Typography variant="body1">
+            You don't have any files yet. Upload your first file!
+          </Typography>
+        </Paper>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead>
+              <TableRow>
+                <TableCell>File Name</TableCell>
+                <TableCell>Created</TableCell>
+                <TableCell>Tags</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Downloads</TableCell>
+                <TableCell align="right">Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {files.map((file) => (
+                <TableRow key={file.id}>
+                  <TableCell>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      {file.fileName}
+                      {file.password && (
+                        <Tooltip title="Password protected">
+                          <LockOutlined
+                            fontSize="small"
+                            sx={{ ml: 1, color: "text.secondary" }}
+                          />
+                        </Tooltip>
+                      )}
+                      {file.expiresAt && (
+                        <Tooltip
+                          title={`Expires at ${formatDate(file.expiresAt)}`}
+                        >
+                          <AccessTimeOutlined
+                            fontSize="small"
+                            sx={{ ml: 1, color: "text.secondary" }}
+                          />
+                        </Tooltip>
+                      )}
+                    </Box>
+                    {file.customUrl && (
+                      <Typography variant="caption" color="textSecondary">
+                        Custom URL: {file.customUrl}
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell>{formatDate(file.createdAt)}</TableCell>
+                  <TableCell>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                      {file.tags.map((tag, index) => (
+                        <Chip
+                          key={index}
+                          label={tag}
+                          size="small"
+                          variant="outlined"
+                        />
+                      ))}
+                      {file.tags.length === 0 && (
+                        <Typography variant="caption" color="textSecondary">
+                          No tags
+                        </Typography>
+                      )}
+                    </Box>
+                  </TableCell>
+                  <TableCell>{getFileStatus(file)}</TableCell>
+                  <TableCell>
+                    {file.currentDownloads}{" "}
+                    {file.maxDownloads ? `/ ${file.maxDownloads}` : ""}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                      <Tooltip title="Download">
+                        <IconButton
+                          onClick={() => handleDownload(file)}
+                          disabled={
+                            isExpired(file) || isDownloadLimitReached(file)
+                          }
+                        >
+                          <GetAppOutlined />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Copy Link">
+                        <IconButton onClick={() => handleCopyLink(file)}>
+                          <ContentCopyOutlined />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Open Details">
+                        <IconButton onClick={() => navigateToDetail(file.id)}>
+                          <OpenInNew />
+                        </IconButton>
+                      </Tooltip>
+                      {isViewableFile(file.fileName) && (
+                        <Tooltip title="View">
+                          <IconButton onClick={() => handleViewFile(file)}>
+                            <VisibilityOutlined />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                      <Tooltip title="Delete">
+                        <IconButton onClick={() => confirmDelete(file.id)}>
+                          <DeleteOutline />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+
+      {/* Password Dialog */}
+      <Dialog
+        open={passwordDialogOpen}
+        onClose={() => setPasswordDialogOpen(false)}
+      >
+        <DialogTitle>Enter Password</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Password"
+            type="password"
+            fullWidth
+            variant="outlined"
+            value={downloadPassword}
+            onChange={(e) => setDownloadPassword(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPasswordDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handlePasswordSubmit} variant="contained">
+            {viewActionType === "view" ? "View" : "Download"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this file? This action cannot be
+            undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleDelete} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* File Content Viewer */}
+      <FileContentViewer
+        open={viewerOpen}
+        onClose={() => setViewerOpen(false)}
+        fileId={selectedFile?.id || ""}
+        fileName={selectedFile?.fileName || ""}
+        fileContent={fileContent}
+        loading={contentLoading}
+        error={contentError}
+      />
     </Container>
   );
 };

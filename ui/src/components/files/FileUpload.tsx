@@ -23,6 +23,9 @@ import {
   Fade,
   Divider,
   Tooltip,
+  Popover,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import { useDropzone } from "react-dropzone";
 import {
@@ -36,10 +39,15 @@ import {
   Folder,
   Tag,
   Info,
+  Visibility,
+  VisibilityOff,
+  Block,
+  Settings,
 } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import fileApi from "../../services/file-share-service";
 import { v4 as uuidv4 } from "uuid";
+import { ShareFileRequest } from "../../types";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -68,19 +76,19 @@ function FileUpload() {
   const theme = useTheme();
 
   // File selection state
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   // Tab state
   const [tabValue, setTabValue] = useState(0);
 
   // Form fields
-  const [customUrl, setCustomUrl] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [customUrl, setCustomUrl] = useState("");
+  const [password, setPassword] = useState("");
   const [expiresAt, setExpiresAt] = useState<string>("");
   const [maxDownloads, setMaxDownloads] = useState<number | undefined>(
     undefined,
   );
-  const [folderPath, setFolderPath] = useState<string>("");
+  const [folderPath, setFolderPath] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState<string>("");
 
@@ -88,14 +96,22 @@ function FileUpload() {
   const [loading, setLoading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
+  // Add new state for field visibility
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Add state for quick upload popovers
+  const [quickSettingsAnchor, setQuickSettingsAnchor] =
+    useState<HTMLButtonElement | null>(null);
+  const [showQuickPassword, setShowQuickPassword] = useState(false);
+  const [showQuickMaxDownloads, setShowQuickMaxDownloads] = useState(false);
+  const [showQuickExpiry, setShowQuickExpiry] = useState(false);
+
   // File selection with react-dropzone
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
-      if (acceptedFiles.length > 0) {
-        setSelectedFile(acceptedFiles[0]);
-      }
+      setSelectedFiles((prev) => [...prev, ...acceptedFiles]);
     },
-    multiple: false,
+    multiple: true,
   });
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -114,41 +130,48 @@ function FileUpload() {
   };
 
   const resetForm = () => {
-    setSelectedFile(null);
-    setCustomUrl("");
-    setPassword("");
-    setExpiresAt("");
-    setMaxDownloads(undefined);
-    setFolderPath("");
-    setTags([]);
-    setNewTag("");
+    setSelectedFiles([]);
     setUploadProgress(0);
   };
 
   const handleQuickUpload = async () => {
-    if (!selectedFile) {
-      toast.error("Please select a file to upload");
+    if (selectedFiles.length === 0) {
+      toast.error("Please select at least one file to upload");
       return;
     }
 
     try {
       setLoading(true);
-      await fileApi.quickShare(selectedFile);
 
-      toast.success("File uploaded successfully!");
+      // Prepare metadata based on quick settings
+      const metadata: ShareFileRequest = {
+        customUrl: customUrl.trim() || undefined,
+        password: showQuickPassword ? password.trim() : undefined,
+        expiresAt: showQuickExpiry ? expiresAt : undefined,
+        maxDownloads: showQuickMaxDownloads ? maxDownloads : undefined,
+        tags: tags.length > 0 ? tags : undefined,
+        folderPath: folderPath.trim() || undefined,
+      };
+
+      // Upload each file with metadata
+      for (const file of selectedFiles) {
+        await fileApi.shareWithMetadata(file, metadata);
+      }
+
+      toast.success(`${selectedFiles.length} file(s) uploaded successfully!`);
       resetForm();
       navigate("/my-files");
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error("Failed to upload file. Please try again.");
+      toast.error("Failed to upload files. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleAdvancedUpload = async () => {
-    if (!selectedFile) {
-      toast.error("Please select a file to upload");
+    if (selectedFiles.length === 0) {
+      toast.error("Please select at least one file to upload");
       return;
     }
 
@@ -156,7 +179,7 @@ function FileUpload() {
       setLoading(true);
 
       // Prepare metadata object
-      const metadata = {
+      const metadata: ShareFileRequest = {
         customUrl: customUrl.trim() || undefined,
         password: password.trim() || undefined,
         expiresAt: expiresAt ? expiresAt : undefined,
@@ -165,29 +188,30 @@ function FileUpload() {
         folderPath: folderPath.trim() || undefined,
       };
 
-      // Call the API with file and metadata
-      await fileApi.shareWithMetadata(selectedFile, metadata);
+      // Upload each file with metadata
+      for (const file of selectedFiles) {
+        await fileApi.shareWithMetadata(file, metadata);
+      }
 
-      toast.success("File uploaded successfully!");
+      toast.success(`${selectedFiles.length} file(s) uploaded successfully!`);
       resetForm();
       navigate("/my-files");
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error("Failed to upload file. Please try again.");
+      toast.error("Failed to upload files. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleChunkedUpload = async () => {
-    if (!selectedFile) {
-      toast.error("Please select a file to upload");
+    if (selectedFiles.length === 0) {
+      toast.error("Please select at least one file to upload");
       return;
     }
 
     // Configuration for chunked upload
     const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB chunks
-    const totalChunks = Math.ceil(selectedFile.size / CHUNK_SIZE);
     const fileId = uuidv4(); // Generate a unique file ID for this upload
 
     // Prepare metadata for all chunks
@@ -203,61 +227,52 @@ function FileUpload() {
     try {
       setLoading(true);
 
-      for (let chunkNumber = 0; chunkNumber < totalChunks; chunkNumber++) {
-        const start = chunkNumber * CHUNK_SIZE;
-        const end = Math.min(start + CHUNK_SIZE, selectedFile.size);
-        const chunkBlob = selectedFile.slice(start, end);
+      for (const file of selectedFiles) {
+        const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
 
-        // Create a File object from the Blob (the backend expects a File)
-        const chunk = new File([chunkBlob], selectedFile.name, {
-          type: selectedFile.type,
-        });
+        for (let chunkNumber = 0; chunkNumber < totalChunks; chunkNumber++) {
+          const start = chunkNumber * CHUNK_SIZE;
+          const end = Math.min(start + CHUNK_SIZE, file.size);
+          const chunkBlob = file.slice(start, end);
 
-        // Create the chunk upload request
-        const uploadRequest = {
-          chunk,
-          fileId,
-          chunkNumber,
-          totalChunks,
-          fileName: selectedFile.name,
-          ...metadata,
-        };
+          // Create a File object from the Blob (the backend expects a File)
+          const chunk = new File([chunkBlob], file.name, {
+            type: file.type,
+          });
 
-        // Upload the chunk
-        const response = await fileApi.uploadChunk(uploadRequest);
+          // Create the chunk upload request
+          const uploadRequest = {
+            chunk,
+            fileId,
+            chunkNumber,
+            totalChunks,
+            fileName: file.name,
+            ...metadata,
+          };
 
-        // Update progress
-        const progress = Math.round(((chunkNumber + 1) / totalChunks) * 100);
-        setUploadProgress(progress);
+          // Upload the chunk
+          const response = await fileApi.uploadChunk(uploadRequest);
 
-        // If we got a full response with file data, all chunks were processed
-        if (response) {
-          toast.success("File upload complete!");
-          resetForm();
-          navigate("/my-files");
-          return;
+          // Update progress
+          const progress = Math.round(((chunkNumber + 1) / totalChunks) * 100);
+          setUploadProgress(progress);
+
+          // If we got a full response with file data, all chunks were processed
+          if (response) {
+            break;
+          }
         }
       }
 
-      // If we reach here without a file response, something went wrong
-      toast.error(
-        "Upload completed but file processing failed. Please try again.",
-      );
+      toast.success("File upload complete!");
+      resetForm();
+      navigate("/my-files");
     } catch (error) {
       console.error("Chunked upload error:", error);
       toast.error("Failed to upload file chunks. Please try again.");
     } finally {
       setLoading(false);
-      setUploadProgress(0);
     }
-  };
-
-  // Get appropriate file icon by type
-  const getFileTypeIcon = () => {
-    if (!selectedFile) return null;
-
-    // Default to FileCopy icon
-    return <FileCopy sx={{ fontSize: 40, mb: 1, color: "primary.main" }} />;
   };
 
   // Format file size
@@ -266,6 +281,19 @@ function FileUpload() {
     else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
     else return (bytes / (1024 * 1024)).toFixed(2) + " MB";
   };
+
+  const handleQuickSettingsClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    setQuickSettingsAnchor(event.currentTarget);
+  };
+
+  const handleQuickSettingsClose = () => {
+    setQuickSettingsAnchor(null);
+  };
+
+  const open = Boolean(quickSettingsAnchor);
+  const id = open ? "quick-settings-popover" : undefined;
 
   return (
     <Container maxWidth="md" sx={{ pb: 5 }}>
@@ -366,54 +394,66 @@ function FileUpload() {
                 textAlign: "center",
                 cursor: "pointer",
                 transition: "all 0.2s ease-in-out",
-                bgcolor: selectedFile
-                  ? alpha(theme.palette.success.main, 0.07)
-                  : isDragActive
-                    ? alpha(theme.palette.primary.main, 0.1)
-                    : "transparent",
+                bgcolor:
+                  selectedFiles.length > 0
+                    ? alpha(theme.palette.success.main, 0.07)
+                    : isDragActive
+                      ? alpha(theme.palette.primary.main, 0.1)
+                      : "transparent",
                 "&:hover": {
-                  bgcolor: selectedFile
-                    ? alpha(theme.palette.success.main, 0.1)
-                    : alpha(theme.palette.primary.main, 0.07),
-                  borderColor: selectedFile
-                    ? theme.palette.success.main
-                    : theme.palette.primary.main,
+                  bgcolor:
+                    selectedFiles.length > 0
+                      ? alpha(theme.palette.success.main, 0.1)
+                      : alpha(theme.palette.primary.main, 0.07),
+                  borderColor:
+                    selectedFiles.length > 0
+                      ? theme.palette.success.main
+                      : theme.palette.primary.main,
                 },
               }}
             >
               <input {...getInputProps()} />
 
-              {selectedFile ? (
-                <Fade in={!!selectedFile}>
-                  <Stack
-                    spacing={2}
-                    alignItems="center"
-                    direction={{ xs: "column", sm: "row" }}
-                    justifyContent="center"
-                  >
-                    {getFileTypeIcon()}
-                    <Box sx={{ textAlign: "left" }}>
-                      <Typography variant="body1" fontWeight="medium">
-                        {selectedFile.name}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {formatFileSize(selectedFile.size)} •{" "}
-                        {selectedFile.type || "Unknown type"}
-                      </Typography>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        color="error"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedFile(null);
+              {selectedFiles.length > 0 ? (
+                <Fade in={selectedFiles.length > 0}>
+                  <Stack spacing={2} sx={{ width: "100%" }}>
+                    {selectedFiles.map((file, index) => (
+                      <Card
+                        key={index}
+                        sx={{
+                          p: 2,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 2,
+                          bgcolor: alpha(theme.palette.primary.main, 0.05),
+                          border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                          "&:hover": {
+                            bgcolor: alpha(theme.palette.primary.main, 0.08),
+                          },
                         }}
-                        sx={{ mt: 1 }}
-                        startIcon={<Delete />}
                       >
-                        Remove
-                      </Button>
-                    </Box>
+                        <FileCopy sx={{ color: "primary.main" }} />
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography variant="body2" noWrap>
+                            {file.name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {formatFileSize(file.size)}
+                          </Typography>
+                        </Box>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedFiles((prev) =>
+                              prev.filter((_, i) => i !== index),
+                            );
+                          }}
+                        >
+                          <Delete fontSize="small" />
+                        </IconButton>
+                      </Card>
+                    ))}
                   </Stack>
                 </Fade>
               ) : (
@@ -423,25 +463,25 @@ function FileUpload() {
                   />
                   <Typography variant="h6" color="text.primary">
                     {isDragActive
-                      ? "Drop the file here"
-                      : "Drag & drop your file"}
+                      ? "Drop the files here"
+                      : "Drag & drop your files"}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     or click to browse from your computer
                   </Typography>
                   <Button variant="outlined" size="small" sx={{ mt: 1 }}>
-                    Select File
+                    Select Files
                   </Button>
                 </Stack>
               )}
             </Box>
 
-            {selectedFile &&
+            {selectedFiles.length > 0 &&
               tabValue === 2 &&
-              selectedFile.size > 20 * 1024 * 1024 && (
+              selectedFiles.some((file) => file.size > 20 * 1024 * 1024) && (
                 <Alert severity="info" sx={{ mt: 2, borderRadius: 1 }}>
-                  This file is large ({formatFileSize(selectedFile.size)}).
-                  Chunked upload is recommended for reliability.
+                  Some files are large ({">"}20MB). Chunked upload is
+                  recommended for reliability.
                 </Alert>
               )}
           </Box>
@@ -458,29 +498,178 @@ function FileUpload() {
                 private to your account.
               </Typography>
 
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleQuickUpload}
-                disabled={!selectedFile || loading}
-                size="large"
-                startIcon={
-                  loading ? (
-                    <CircularProgress size={20} color="inherit" />
-                  ) : (
-                    <CloudUpload />
-                  )
-                }
-                sx={{
-                  px: 4,
-                  py: 1.2,
-                  fontWeight: "bold",
-                  borderRadius: 30,
-                  boxShadow: 2,
+              <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleQuickUpload}
+                  disabled={selectedFiles.length === 0 || loading}
+                  size="large"
+                  startIcon={
+                    loading ? (
+                      <CircularProgress size={20} color="inherit" />
+                    ) : (
+                      <CloudUpload />
+                    )
+                  }
+                  sx={{
+                    px: 4,
+                    py: 1.2,
+                    fontWeight: "bold",
+                    borderRadius: 30,
+                    boxShadow: 2,
+                  }}
+                >
+                  {loading ? "Uploading..." : "Quick Upload"}
+                </Button>
+
+                <Tooltip title="Quick Settings">
+                  <IconButton
+                    onClick={handleQuickSettingsClick}
+                    color="primary"
+                    size="large"
+                    sx={{
+                      bgcolor: alpha(theme.palette.primary.main, 0.1),
+                      "&:hover": {
+                        bgcolor: alpha(theme.palette.primary.main, 0.2),
+                      },
+                    }}
+                  >
+                    <Settings />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+
+              <Popover
+                id={id}
+                open={open}
+                anchorEl={quickSettingsAnchor}
+                onClose={handleQuickSettingsClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
                 }}
               >
-                {loading ? "Uploading..." : "Quick Upload"}
-              </Button>
+                <Box sx={{ p: 2, minWidth: 300 }}>
+                  <Typography
+                    variant="subtitle2"
+                    gutterBottom
+                    fontWeight="medium"
+                  >
+                    Quick Settings
+                  </Typography>
+                  <Stack spacing={2}>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={showQuickPassword}
+                          onChange={(e) =>
+                            setShowQuickPassword(e.target.checked)
+                          }
+                          color="primary"
+                        />
+                      }
+                      label={
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          <Lock fontSize="small" />
+                          <Typography variant="body2">
+                            Password Protection
+                          </Typography>
+                        </Box>
+                      }
+                    />
+                    {showQuickPassword && (
+                      <TextField
+                        label="Password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        size="small"
+                        fullWidth
+                        placeholder="Enter password"
+                        autoComplete="new-password"
+                      />
+                    )}
+
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={showQuickMaxDownloads}
+                          onChange={(e) =>
+                            setShowQuickMaxDownloads(e.target.checked)
+                          }
+                          color="primary"
+                        />
+                      }
+                      label={
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          <Block fontSize="small" />
+                          <Typography variant="body2">
+                            Download Limit
+                          </Typography>
+                        </Box>
+                      }
+                    />
+                    {showQuickMaxDownloads && (
+                      <TextField
+                        label="Max Downloads"
+                        type="number"
+                        value={maxDownloads === undefined ? "" : maxDownloads}
+                        onChange={(e) =>
+                          setMaxDownloads(
+                            e.target.value
+                              ? parseInt(e.target.value)
+                              : undefined,
+                          )
+                        }
+                        size="small"
+                        fullWidth
+                        inputProps={{ min: 1 }}
+                        placeholder="Enter limit"
+                      />
+                    )}
+
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={showQuickExpiry}
+                          onChange={(e) => setShowQuickExpiry(e.target.checked)}
+                          color="primary"
+                        />
+                      }
+                      label={
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          <Schedule fontSize="small" />
+                          <Typography variant="body2">
+                            Expiration Date
+                          </Typography>
+                        </Box>
+                      }
+                    />
+                    {showQuickExpiry && (
+                      <TextField
+                        label="Expires At"
+                        type="datetime-local"
+                        value={expiresAt}
+                        onChange={(e) => setExpiresAt(e.target.value)}
+                        size="small"
+                        fullWidth
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    )}
+                  </Stack>
+                </Box>
+              </Popover>
             </Stack>
           </TabPanel>
 
@@ -519,14 +708,25 @@ function FileUpload() {
                 <TextField
                   label="Password"
                   fullWidth
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   helperText="Protect your file with a password"
+                  autoComplete="new-password"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
                         <Lock fontSize="small" color="action" />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
                       </InputAdornment>
                     ),
                   }}
@@ -565,6 +765,13 @@ function FileUpload() {
                   }
                   inputProps={{ min: 1 }}
                   helperText="Limit the number of times the file can be downloaded"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Block fontSize="small" color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
 
@@ -668,7 +875,7 @@ function FileUpload() {
                   variant="contained"
                   color="primary"
                   onClick={handleAdvancedUpload}
-                  disabled={!selectedFile || loading}
+                  disabled={selectedFiles.length === 0 || loading}
                   size="large"
                   startIcon={
                     loading ? (
@@ -739,6 +946,7 @@ function FileUpload() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   helperText="Protect your file with a password"
+                  autoComplete="new-password"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -921,7 +1129,7 @@ function FileUpload() {
                   variant="contained"
                   color="primary"
                   onClick={handleChunkedUpload}
-                  disabled={!selectedFile || loading}
+                  disabled={selectedFiles.length === 0 || loading}
                   size="large"
                   startIcon={
                     loading ? (
