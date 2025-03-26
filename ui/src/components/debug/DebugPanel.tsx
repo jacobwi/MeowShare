@@ -78,17 +78,6 @@ interface RequestLog {
   isError: boolean;
 }
 
-// Add at the top of the file with other interfaces
-interface PerformanceMemory {
-  usedJSHeapSize: number;
-  totalJSHeapSize: number;
-  jsHeapSizeLimit: number;
-}
-
-interface ExtendedPerformance extends Performance {
-  memory?: PerformanceMemory;
-}
-
 // Component to prettify and display JSON
 const JsonViewer: React.FC<{ data: unknown }> = ({ data }) => {
   const [showRaw, setShowRaw] = useState<boolean>(false);
@@ -797,12 +786,12 @@ const PerformanceMetrics: React.FC = () => {
               >
                 <Typography color="text.secondary">Page Size</Typography>
                 <Typography variant="body1" fontWeight="medium">
-                  {(
-                    window.performance.memory?.usedJSHeapSize /
-                    1024 /
-                    1024
-                  ).toFixed(2)}{" "}
-                  MB
+                  {(() => {
+                    const perf = window.performance as ExtendedPerformance;
+                    const memory = perf.memory;
+                    if (!memory) return 'N/A';
+                    return `${(memory.usedJSHeapSize / 1024 / 1024).toFixed(2)} MB`;
+                  })()}
                 </Typography>
               </Box>
             </Box>
