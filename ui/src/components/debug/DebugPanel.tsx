@@ -36,6 +36,7 @@ import {
   useTheme,
   alpha,
   Grid,
+  SelectChangeEvent,
 } from "@mui/material";
 import {
   Close as CloseIcon,
@@ -59,6 +60,7 @@ import {
   getStatusColor,
   formatTimestamp,
 } from "../../utils/debug-utils";
+import type { ExtendedPerformance } from "../../types/performance";
 
 // Interface to match RequestLog from DebugInterceptor
 interface RequestLog {
@@ -464,12 +466,12 @@ const LogStream: React.FC = () => {
     // Add performance monitoring
     const performance = window.performance as ExtendedPerformance;
     const logPerformance = () => {
-      if (performance.memory) {
-        const memory = performance.memory;
-        console.info("Memory Usage:", {
+      const memory = (performance as ExtendedPerformance).memory;
+      if (memory) {
+        console.info('Memory Usage:', {
           used: `${(memory.usedJSHeapSize / 1024 / 1024).toFixed(2)} MB`,
           total: `${(memory.totalJSHeapSize / 1024 / 1024).toFixed(2)} MB`,
-          limit: `${(memory.jsHeapSizeLimit / 1024 / 1024).toFixed(2)} MB`,
+          limit: `${(memory.jsHeapSizeLimit / 1024 / 1024).toFixed(2)} MB`
         });
       }
     };
@@ -540,12 +542,8 @@ const LogStream: React.FC = () => {
     setLogs([]);
   };
 
-  const handleLogTypeChange = (
-    event: React.ChangeEvent<{ value: unknown }>,
-  ) => {
-    setLogType(
-      event.target.value as "all" | "log" | "warn" | "error" | "info" | "debug",
-    );
+  const handleLogTypeChange = (event: SelectChangeEvent<'all' | 'log' | 'warn' | 'error' | 'info' | 'debug'>) => {
+    setLogType(event.target.value as 'all' | 'log' | 'warn' | 'error' | 'info' | 'debug');
   };
 
   const filteredLogs = logs.filter((log) => {
