@@ -1,0 +1,40 @@
+services:
+  frontend:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=/api
+        - VITE_DEMO_MODE=${DEMO_MODE:-true}
+        - VITE_APP_NAME=${VITE_APP_NAME:-MeowShare}
+    ports:
+      - "${FRONTEND_PORT:-80}:3000"
+    environment:
+      - VITE_API_URL=/api
+      - USE_API_PROXY=true
+      - VITE_DEMO_MODE=${DEMO_MODE:-true}
+      - API_TARGET=https://backend:8080
+    networks:
+      - meowshare-network
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./src
+      dockerfile: MeowShare.Api/Dockerfile
+      args:
+        - NUGET_APIKEY=${NUGET_APIKEY}
+        - NUGET_SOURCE=${NUGET_SOURCE}
+    # Internal service - no ports exposed to host
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=https://+:8080
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certs/cert.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=your_cert_password
+    networks:
+      - meowshare-network
+
+networks:
+  meowshare-network:
+    driver: bridge

@@ -1,0 +1,72 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "API: .NET Core Launch",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/MeowShare.Api/bin/Debug/net9.0/MeowShare.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/MeowShare.Api",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/api-reference"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "https://localhost:7222"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/Views"
+      },
+      "justMyCode": false,
+      "suppressJITOptimizations": true,
+      "symbolOptions": {
+        "searchPaths": [],
+        "searchMicrosoftSymbolServer": true,
+        "searchNuGetOrgSymbolServer": true
+      }
+    },
+    {
+      "name": "UI: Chrome Launch",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/ui",
+      "preLaunchTask": "start-ui",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///src/*": "${webRoot}/src/*"
+      },
+      "env": {
+        "VITE_API_URL": "https://localhost:7222"
+      }
+    },
+    {
+      "name": "UI: Edge Launch",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/ui",
+      "preLaunchTask": "start-ui",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///src/*": "${webRoot}/src/*"
+      },
+      "env": {
+        "VITE_API_URL": "https://localhost:7222"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack: API + UI",
+      "configurations": ["UI: Chrome Launch"],
+      "stopAll": true,
+      "preLaunchTask": "start-both"
+    }
+  ]
+}

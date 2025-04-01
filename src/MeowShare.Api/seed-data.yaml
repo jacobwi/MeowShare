@@ -1,0 +1,281 @@
+﻿# Moka.Auth Seed Configuration
+# seed-data.yaml
+
+# General options
+throwOnError: false
+recreateDefaults: true
+useTransaction: true
+
+# Users to seed
+users:
+  - username: admin
+    email: admin@example.com
+    # Password will be overridden by environment variable MOKA_AUTH_ADMIN_PASSWORD if present
+    password: Admin123!
+    firstName: System
+    lastName: Administrator
+    isActive: true
+    emailConfirmed: true
+    roles:
+      - Admin
+    apiKeys:
+      - AdminConsoleKey
+      - AdminBackupKey
+
+  - username: developer
+    email: dev@example.com
+    password: Developer123!
+    firstName: Lead
+    lastName: Developer
+    isActive: true
+    emailConfirmed: true
+    roles:
+      - Manager
+    permissions:
+      - ApiKeys:Manage
+      - Content:Delete
+    apiKeys:
+      - DevConsoleKey
+      - CIDeployKey
+
+  - username: support
+    email: support@example.com
+    password: Support123!
+    firstName: Customer
+    lastName: Support
+    isActive: true
+    emailConfirmed: true
+    roles:
+      - User
+    permissions:
+      - Users:View
+    apiKeys:
+      - SupportKey
+
+# Roles to seed
+roles:
+  - name: Admin
+    description: Administrator with full access
+    isSystem: true
+    isDefault: false
+
+  - name: Manager
+    description: Manager with elevated permissions
+    isSystem: true
+    isDefault: false
+
+  - name: User
+    description: Regular user with basic access
+    isSystem: true
+    isDefault: true
+
+  - name: ReadOnly
+    description: User with read-only access
+    isSystem: false
+    isDefault: false
+    permissions:
+      - Content:View
+      - MyProfile:View
+
+  - name: Developer
+    description: Developer with technical access
+    isSystem: false
+    isDefault: false
+    permissions:
+      - Content:View
+      - Content:Create
+      - Content:Edit
+      - ApiKeys:Manage
+      - MyProfile:View
+      - MyProfile:Edit
+
+# Permissions to seed
+permissions:
+  # Admin permissions
+  - name: Admin
+    description: Full administrative access
+    category: Administration
+    roles:
+      - Admin
+  
+  # User management permissions
+  - name: Users:View
+    description: View users
+    category: User Management
+    roles:
+      - Admin
+      - Manager
+
+  - name: Users:Create
+    description: Create users
+    category: User Management
+    roles:
+      - Admin
+      - Manager
+
+  - name: Users:Edit
+    description: Edit users
+    category: User Management
+    roles:
+      - Admin
+      - Manager
+
+  - name: Users:Delete
+    description: Delete users
+    category: User Management
+    roles:
+      - Admin
+  
+  # Role management permissions
+  - name: Roles:View
+    description: View roles
+    category: Role Management
+    roles:
+      - Admin
+      - Manager
+
+  - name: Roles:Create
+    description: Create roles
+    category: Role Management
+    roles:
+      - Admin
+
+  - name: Roles:Edit
+    description: Edit roles
+    category: Role Management
+    roles:
+      - Admin
+
+  - name: Roles:Delete
+    description: Delete roles
+    category: Role Management
+    roles:
+      - Admin
+  
+  # Permission management permissions
+  - name: Permissions:View
+    description: View permissions
+    category: Permission Management
+    roles:
+      - Admin
+      - Manager
+
+  - name: Permissions:Assign
+    description: Assign permissions
+    category: Permission Management
+    roles:
+      - Admin
+  
+  # Content management permissions
+  - name: Content:View
+    description: View content
+    category: Content Management
+    roles:
+      - Admin
+      - Manager
+      - User
+      - ReadOnly
+      - Developer
+
+  - name: Content:Create
+    description: Create content
+    category: Content Management
+    roles:
+      - Admin
+      - Manager
+      - Developer
+
+  - name: Content:Edit
+    description: Edit content
+    category: Content Management
+    roles:
+      - Admin
+      - Manager
+      - Developer
+
+  - name: Content:Delete
+    description: Delete content
+    category: Content Management
+    roles:
+      - Admin
+      - Manager
+  
+  # API management permissions
+  - name: ApiKeys:Manage
+    description: Manage API keys
+    category: API Keys
+    roles:
+      - Admin
+      - Developer
+  
+  # User profile permissions
+  - name: MyProfile:View
+    description: View own profile
+    category: User Profile
+    roles:
+      - Admin
+      - Manager
+      - User
+      - ReadOnly
+      - Developer
+
+  - name: MyProfile:Edit
+    description: Edit own profile
+    category: User Profile
+    roles:
+      - Admin
+      - Manager
+      - User
+      - Developer
+
+# API keys to seed with specific values
+apiKeys:
+  # User-associated keys (original format)
+  - name: SystemIntegrationKey
+    # Value will be overridden by environment variable MOKA_AUTH_SYSTEM_INTEGRATION_KEY if present
+    value: system-integration-key-12345
+    username: admin
+    expiresAt: 2025-12-31T23:59:59Z
+    isActive: true
+
+  - name: MonitoringKey
+    # Value will be overridden by environment variable MOKA_AUTH_MONITORING_KEY if present
+    value: monitoring-key-67890
+    username: support
+    expiresAt: 2025-12-31T23:59:59Z
+    isActive: true
+  
+  # Standalone API keys (new format)
+  - name: ReportingServiceKey
+    value: reporting-service-key-54321
+    description: "API key for automated reporting service"
+    keyType: Standalone  # Values: UserAssociated, Standalone, System
+    expiresAt: 2025-12-31T23:59:59Z
+    isActive: true
+    roles:
+      - ReadOnly
+    permissions:
+      - Content:View
+      - Users:View
+
+  - name: BackupServiceKey
+    value: backup-service-key-98765
+    description: "API key for backup service"
+    keyType: Standalone
+    expiresAt: 2025-12-31T23:59:59Z
+    isActive: true
+    permissions:
+      - Content:View
+      - Content:Create
+  
+  # System API key example
+  - name: ContinuousIntegrationKey
+    value: ci-system-key-abcdef
+    description: "API key for CI/CD pipeline"
+    keyType: System
+    expiresAt: 2025-12-31T23:59:59Z
+    isActive: true
+    permissions:
+      - ApiKeys:Manage
+      - Content:Create
+      - Content:Edit

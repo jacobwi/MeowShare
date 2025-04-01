@@ -1,0 +1,10 @@
+services:
+  meowshare:
+    image: registry.bcat.cloud/bcat/meowshare:latest
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - VITE_APP_NAME=${VITE_APP_NAME:-MeowShare}
+    restart: unless-stopped
+      
