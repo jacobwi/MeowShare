@@ -3,8 +3,8 @@
 using MeowShare.Api.Data;
 using MeowShare.Api.Features.Profile.Models;
 using Moka.Auth.Core.Entities;
-using Moka.Auth.Core.Extensions;
-using Moka.Auth.Core.Options;
+using Moka.Auth.Core.Features.Auth;
+using Moka.Auth.Data;
 using Moka.Auth.Data.Extensions;
 using Moka.Auth.Data.Seeding;
 using Moka.Auth.Data.Seeding.Configuration;
@@ -39,6 +39,7 @@ public static class MeowAuthExtensions
             authOptions =>
             {
                 authOptions.EnableIdentitySystem = true;
+                authOptions.EnableImpersonation = true;
                 // Other auth options as needed
             }
         );
@@ -80,7 +81,7 @@ public static class MeowAuthExtensions
                 {
                     var yamlContent = await File.ReadAllTextAsync(yamlFilePath);
                     logger.LogDebug("YAML file content length: {ContentLength} bytes", yamlContent.Length);
-                    
+
                     await app.SeedMokaAuthDataFromYamlAsync<ApplicationUser, MokaRole, AppDbContext>(
                         yamlFilePath
                     );
@@ -98,7 +99,7 @@ public static class MeowAuthExtensions
                 try
                 {
                     var files = Directory.GetFiles(app.Environment.ContentRootPath);
-                    foreach (var file in files) 
+                    foreach (var file in files)
                         logger.LogDebug("- {FileName}", file);
                 }
                 catch (Exception ex)

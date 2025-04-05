@@ -26,7 +26,6 @@ public static class Endpoints
             "/api/profile/avatar/{fileName}",
             async (string fileName) =>
             {
-                
                 var avatarPath = Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory,
                     "wwwroot",
@@ -142,7 +141,8 @@ public static class Endpoints
                         user.ProfileUpdatedAt = DateTimeOffset.UtcNow;
                         await userRepo.UpdateAsync(user);
 
-                        return Results.Ok(new { 
+                        return Results.Ok(new
+                        {
                             AvatarUrl = $"/api/profile/avatar/{user.ProfileImageFileName}",
                             ProfileImageFileName = user.ProfileImageFileName,
                             ContentType = file.ContentType

@@ -12,12 +12,13 @@ using MeowShare.Api.Features.Profile.Models;
 using MeowShare.Api.Features.Profile.Services;
 using MeowShare.Api.Features.Shared.Repositories;
 using Moka.Auth.Core.Extensions;
+using Moka.Auth.Core.Features.Auth;
 using Moka.Auth.Data.Extensions;
 using Scalar.AspNetCore;
 
 #endregion
 
-DotEnv.Load(options: new DotEnvOptions(envFilePaths: ["../../.env"]));
+DotEnv.Load(new DotEnvOptions(envFilePaths: ["../../.env"]));
 
 
 var builder = WebApplication.CreateBuilder(args);
