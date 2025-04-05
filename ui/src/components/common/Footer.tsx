@@ -69,7 +69,7 @@ const Footer: React.FC = () => {
               }}
             />{" "}
             by
-            <Link href="https://github.com/jacobwi" underline="hover" color="inherit" sx={{ ml: 0.5 }}>
+            <Link href="#https://github.com/jacobwi" underline="hover" color="inherit" sx={{ ml: 0.5 }}>
               BCat
             </Link>
           </Typography>
