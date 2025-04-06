@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { CssBaseline, Box, ThemeProvider } from "@mui/material";
+import { CssBaseline, Box, ThemeProvider, Grid } from "@mui/material";
 import { Slide } from "react-toastify";
 
 // Context Providers

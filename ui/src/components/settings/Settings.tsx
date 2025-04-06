@@ -345,7 +345,7 @@ export const Settings: React.FC = () => {
                 </Typography>
 
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} md={6} component="div">
                     <TextField
                       fullWidth
                       label="Current Password"
@@ -377,7 +377,7 @@ export const Settings: React.FC = () => {
                 </Grid>
 
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} md={6} component="div">
                     <TextField
                       fullWidth
                       label="New Password"
@@ -409,7 +409,7 @@ export const Settings: React.FC = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} md={6} component="div">
                     <TextField
                       fullWidth
                       label="Confirm New Password"
