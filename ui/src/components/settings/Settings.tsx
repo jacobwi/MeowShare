@@ -798,11 +798,11 @@ export const Settings: React.FC = () => {
               </Button>
             </Grid>
 
-            <Grid component="div" item xs={12}>
+            <Grid item xs={12}>
               <Divider />
             </Grid>
 
-            <Grid component="div" item xs={12} sm={8}>
+            <Grid item xs={12} sm={8}>
               <Typography variant="body1" fontWeight="500">
                 Delete Account
               </Typography>
@@ -813,7 +813,7 @@ export const Settings: React.FC = () => {
               </Typography>
             </Grid>
 
-            <Grid component="div" item xs={12} sm={4} sx={{ textAlign: { sm: "right" } }}>
+            <Grid item xs={12} sm={4} sx={{ textAlign: { sm: "right" } }}>
               <Button
                 variant="contained"
                 color="error"
