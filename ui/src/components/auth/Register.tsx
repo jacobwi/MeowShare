@@ -246,8 +246,8 @@ const Register: React.FC = () => {
     switch (step) {
       case 0:
         return (
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid container spacing={2} component="div">
+            <Grid component="div" size={[12]}>
               <TextField
                 fullWidth
                 id="username"
@@ -273,7 +273,7 @@ const Register: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid component="div" size={[12]}>
               <TextField
                 fullWidth
                 id="email"
@@ -301,8 +301,8 @@ const Register: React.FC = () => {
         );
       case 1:
         return (
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid container spacing={2} component="div">
+            <Grid component="div" size={[12]}>
               <TextField
                 fullWidth
                 name="password"
@@ -376,7 +376,7 @@ const Register: React.FC = () => {
               )}
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid component="div" size={[12]}>
               <TextField
                 fullWidth
                 name="confirmPassword"
@@ -417,7 +417,7 @@ const Register: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid component="div" size={[12]}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -443,7 +443,11 @@ const Register: React.FC = () => {
                 }
               />
               {agreeToTermsError && (
-                <Typography variant="caption" color="error">
+                <Typography
+                  variant="caption"
+                  color="error"
+                  sx={{ display: "block", mt: 0.5 }}
+                >
                   {agreeToTermsError}
                 </Typography>
               )}

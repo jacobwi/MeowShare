@@ -171,7 +171,7 @@ const Dashboard: React.FC = () => {
         }}
       >
         <Grid container spacing={3} alignItems="center">
-          <Grid item xs={12} md={8}>
+          <Grid component="div" size={[12, null, 8]}>
             <Typography
               variant="h4"
               component="h1"
@@ -184,7 +184,7 @@ const Dashboard: React.FC = () => {
               Here's an overview of your file sharing activities
             </Typography>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid component="div" size={[12, null, 4]}>
             <Stack
               direction="row"
               spacing={4}
@@ -217,8 +217,8 @@ const Dashboard: React.FC = () => {
       <Typography variant="h5" gutterBottom fontWeight="medium" sx={{ mb: 3 }}>
         Quick Actions
       </Typography>
-      <Grid container spacing={3} sx={{ mb: 6 }}>
-        <Grid item xs={12} sm={6} md={4}>
+      <Grid container spacing={4} component="div" sx={{ mb: 6 }}>
+        <Grid component="div" size={[12, 6, 4]}>
           <Paper
             elevation={0}
             sx={{
@@ -261,7 +261,7 @@ const Dashboard: React.FC = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid component="div" size={[12, 6, 4]}>
           <Paper
             elevation={0}
             sx={{
@@ -304,7 +304,7 @@ const Dashboard: React.FC = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid component="div" size={[12, 6, 4]}>
           <Paper
             elevation={0}
             sx={{
@@ -361,7 +361,7 @@ const Dashboard: React.FC = () => {
       <TabPanel value={tabValue} index={0}>
         <Grid container spacing={3}>
           {recentFiles.map((file) => (
-            <Grid item xs={12} sm={6} md={3} key={file.id}>
+            <Grid component="div" size={[12, 6, 3]} key={file.id}>
               <Card
                 elevation={0}
                 sx={{
@@ -453,7 +453,7 @@ const Dashboard: React.FC = () => {
       <TabPanel value={tabValue} index={2}>
         <Grid container spacing={3}>
           {stats.popularFiles.map((file) => (
-            <Grid item xs={12} sm={6} md={4} key={file.id}>
+            <Grid component="div" size={[12, 6, 4]} key={file.id}>
               <Card
                 elevation={0}
                 sx={{

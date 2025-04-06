@@ -96,9 +96,9 @@ const Home: React.FC = () => {
             Key Features
           </Typography>
 
-          <Grid container spacing={4}>
+          <Grid container spacing={4} component="div">
             {/* Feature 1 */}
-            <Grid item xs={12} md={4}>
+            <Grid component="div" size={[12, null, 4]}>
               <Paper
                 elevation={0}
                 sx={{
@@ -132,7 +132,7 @@ const Home: React.FC = () => {
             </Grid>
 
             {/* Feature 2 */}
-            <Grid item xs={12} md={4}>
+            <Grid component="div" size={[12, null, 4]}>
               <Paper
                 elevation={0}
                 sx={{
@@ -164,7 +164,7 @@ const Home: React.FC = () => {
             </Grid>
 
             {/* Feature 3 */}
-            <Grid item xs={12} md={4}>
+            <Grid component="div" size={[12, null, 4]}>
               <Paper
                 elevation={0}
                 sx={{
@@ -209,7 +209,7 @@ const Home: React.FC = () => {
       >
         <Container maxWidth={false} sx={{ px: { xs: 2, sm: 3, md: 4, lg: 6 } }}>
           <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={8}>
+            <Grid size={[12, null, 8]}>
               <Typography variant="h4" gutterBottom>
                 Ready to start sharing?
               </Typography>
@@ -219,9 +219,7 @@ const Home: React.FC = () => {
               </Typography>
             </Grid>
             <Grid
-              item
-              xs={12}
-              md={4}
+              size={[12, null, 4]}
               sx={{ textAlign: { xs: "left", md: "right" } }}
             >
               <Button

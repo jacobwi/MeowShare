@@ -357,8 +357,8 @@ const FileDetails: React.FC = () => {
 
           <Divider sx={{ mb: 3 }} />
 
-          <Grid container spacing={3} component="div">
-            <Grid item xs={12} md={6} component="div">
+          <Grid container spacing={2} component="div">
+            <Grid component="div" size={[12, null, 6]}>
               <Typography variant="subtitle2" color="text.secondary">
                 Upload Date
               </Typography>
@@ -367,7 +367,7 @@ const FileDetails: React.FC = () => {
               </Typography>
             </Grid>
 
-            <Grid item xs={12} md={6} component="div">
+            <Grid component="div" size={[12, null, 6]}>
               <Typography variant="subtitle2" color="text.secondary">
                 Expiration Date
               </Typography>
@@ -386,7 +386,7 @@ const FileDetails: React.FC = () => {
               </Typography>
             </Grid>
 
-            <Grid item xs={12} md={6} component="div">
+            <Grid component="div" size={[12, null, 6]}>
               <Typography variant="subtitle2" color="text.secondary">
                 Download Count
               </Typography>
@@ -396,7 +396,7 @@ const FileDetails: React.FC = () => {
               </Typography>
             </Grid>
 
-            <Grid item xs={12} md={6} component="div">
+            <Grid component="div" size={[12, null, 6]}>
               <Typography variant="subtitle2" color="text.secondary">
                 Protection
               </Typography>
@@ -415,7 +415,7 @@ const FileDetails: React.FC = () => {
               </Typography>
             </Grid>
 
-            <Grid item xs={12} component="div">
+            <Grid component="div" size={[12]}>
               <Typography variant="subtitle2" color="text.secondary">
                 Custom URL
               </Typography>
@@ -424,7 +424,7 @@ const FileDetails: React.FC = () => {
               </Typography>
             </Grid>
 
-            <Grid item xs={12} component="div">
+            <Grid component="div" size={[12]}>
               <Typography variant="subtitle2" color="text.secondary">
                 Folder Path
               </Typography>
@@ -433,7 +433,7 @@ const FileDetails: React.FC = () => {
               </Typography>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid component="div" size={[12]}>
               <Typography variant="subtitle2" color="text.secondary">
                 Tags
               </Typography>

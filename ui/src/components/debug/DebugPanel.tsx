@@ -688,7 +688,7 @@ const PerformanceMetrics: React.FC = () => {
         Performance Metrics
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
+        <Grid size={[12, null, 6]}>
           <Paper
             sx={{
               p: 2,
@@ -757,7 +757,7 @@ const PerformanceMetrics: React.FC = () => {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid size={[12, null, 6]}>
           <Paper
             sx={{
               p: 2,
@@ -851,7 +851,7 @@ const MemoryMetrics: React.FC = () => {
         Memory Usage
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={4}>
+        <Grid size={[12, null, 4]}>
           <Paper
             sx={{
               p: 2,
@@ -872,7 +872,7 @@ const MemoryMetrics: React.FC = () => {
             </Typography>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={[12, null, 4]}>
           <Paper
             sx={{
               p: 2,
@@ -893,7 +893,7 @@ const MemoryMetrics: React.FC = () => {
             </Typography>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={[12, null, 4]}>
           <Paper
             sx={{
               p: 2,
@@ -979,7 +979,7 @@ const StorageMetrics: React.FC = () => {
         Storage Usage
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={4}>
+        <Grid size={[12, null, 4]}>
           <Paper
             sx={{
               p: 2,
@@ -1000,7 +1000,7 @@ const StorageMetrics: React.FC = () => {
             </Typography>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={[12, null, 4]}>
           <Paper
             sx={{
               p: 2,
@@ -1021,7 +1021,7 @@ const StorageMetrics: React.FC = () => {
             </Typography>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={[12, null, 4]}>
           <Paper
             sx={{
               p: 2,

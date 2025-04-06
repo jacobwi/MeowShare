@@ -156,8 +156,8 @@ const EmailConfigPanel: React.FC = () => {
         )}
 
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+          <Grid container spacing={3} component="div">
+            <Grid component="div" size={[12, null, 6]}>
               <TextField
                 fullWidth
                 label="SMTP Host"
@@ -168,7 +168,7 @@ const EmailConfigPanel: React.FC = () => {
                 margin="normal"
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid component="div" size={[12, null, 6]}>
               <TextField
                 fullWidth
                 label="SMTP Port"
@@ -180,7 +180,7 @@ const EmailConfigPanel: React.FC = () => {
                 margin="normal"
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid component="div" size={[12, null, 6]}>
               <TextField
                 fullWidth
                 label="SMTP Username"
@@ -191,7 +191,7 @@ const EmailConfigPanel: React.FC = () => {
                 margin="normal"
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid component="div" size={[12, null, 6]}>
               <TextField
                 fullWidth
                 label="SMTP Password"
@@ -214,7 +214,7 @@ const EmailConfigPanel: React.FC = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid component="div" size={[12, null, 6]}>
               <TextField
                 fullWidth
                 label="From Email Address"
@@ -225,7 +225,7 @@ const EmailConfigPanel: React.FC = () => {
                 margin="normal"
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid component="div" size={[12, null, 6]}>
               <TextField
                 fullWidth
                 label="From Name (optional)"
@@ -235,7 +235,7 @@ const EmailConfigPanel: React.FC = () => {
                 margin="normal"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid component="div" size={[12]}>
               <FormControlLabel
                 control={
                   <Switch
@@ -247,7 +247,7 @@ const EmailConfigPanel: React.FC = () => {
                 label="Enable SSL/TLS"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid component="div" size={[12]}>
               <Button
                 type="submit"
                 variant="contained"
@@ -280,7 +280,7 @@ const EmailConfigPanel: React.FC = () => {
         )}
 
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={8}>
+          <Grid component="div" size={[12, null, 8]}>
             <TextField
               fullWidth
               label="Test Email Address"
@@ -291,7 +291,7 @@ const EmailConfigPanel: React.FC = () => {
               placeholder="Enter email address to send test"
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid component="div" size={[12, null, 4]}>
             <Button
               variant="outlined"
               color="primary"

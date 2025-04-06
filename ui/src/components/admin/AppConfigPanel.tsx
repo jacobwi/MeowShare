@@ -111,8 +111,8 @@ const AppConfigPanel: React.FC = () => {
         </Typography>
         <Divider sx={{ mb: 3 }} />
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+        <Grid container spacing={3} component="div">
+          <Grid component="div" size={[12, null, 6]}>
             <TextField
               fullWidth
               label="App Name"
@@ -125,7 +125,7 @@ const AppConfigPanel: React.FC = () => {
             />
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid component="div" size={[12, null, 6]}>
             <TextField
               fullWidth
               label="API URL"
@@ -138,7 +138,7 @@ const AppConfigPanel: React.FC = () => {
             />
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid component="div" size={[12, null, 6]}>
             <FormControlLabel
               control={
                 <Switch
@@ -167,8 +167,8 @@ const AppConfigPanel: React.FC = () => {
         </Typography>
         <Divider sx={{ mb: 3 }} />
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+        <Grid container spacing={3} component="div">
+          <Grid component="div" size={[12, null, 6]}>
             <TextField
               fullWidth
               label="Max File Size (bytes)"
@@ -182,7 +182,7 @@ const AppConfigPanel: React.FC = () => {
             />
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid component="div" size={[12, null, 6]}>
             <TextField
               fullWidth
               label="Chunk Size (bytes)"
@@ -196,7 +196,7 @@ const AppConfigPanel: React.FC = () => {
             />
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid component="div" size={[12, null, 6]}>
             <TextField
               fullWidth
               label="Default Expiration (days)"

@@ -675,8 +675,8 @@ function FileUpload() {
 
           {/* Advanced Upload Tab */}
           <TabPanel value={tabValue} index={1}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
+            <Grid container spacing={3} component="div">
+              <Grid component="div" size={[12]}>
                 <Typography
                   variant="subtitle1"
                   fontWeight="medium"
@@ -686,7 +686,7 @@ function FileUpload() {
                 </Typography>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid component="div" size={[12, null, 6]}>
                 <TextField
                   label="Custom URL"
                   fullWidth
@@ -704,7 +704,7 @@ function FileUpload() {
                 />
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid component="div" size={[12, null, 6]}>
                 <TextField
                   label="Password"
                   fullWidth
@@ -733,7 +733,7 @@ function FileUpload() {
                 />
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid component="div" size={[12, null, 6]}>
                 <TextField
                   label="Expiration Date"
                   fullWidth
@@ -752,7 +752,7 @@ function FileUpload() {
                 />
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid component="div" size={[12, null, 6]}>
                 <TextField
                   label="Max Downloads"
                   fullWidth
@@ -775,7 +775,7 @@ function FileUpload() {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid component="div" size={[12]}>
                 <Divider sx={{ my: 1 }} />
                 <Typography
                   variant="subtitle1"
@@ -787,7 +787,7 @@ function FileUpload() {
                 </Typography>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid component="div" size={[12, null, 6]}>
                 <TextField
                   label="Folder Path"
                   fullWidth
@@ -805,7 +805,7 @@ function FileUpload() {
                 />
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid component="div" size={[12, null, 6]}>
                 <TextField
                   label="Tags"
                   fullWidth
@@ -845,7 +845,7 @@ function FileUpload() {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid component="div" size={[12]}>
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
                   {tags.map((tag) => (
                     <Chip
@@ -870,29 +870,20 @@ function FileUpload() {
                 </Box>
               </Grid>
 
-              <Grid item xs={12} sx={{ textAlign: "center", mt: 2 }}>
+              <Grid component="div" size={[12]} sx={{ textAlign: "center", mt: 2 }}>
                 <Button
                   variant="contained"
                   color="primary"
+                  size="large"
+                  startIcon={<CloudUpload />}
                   onClick={handleAdvancedUpload}
                   disabled={selectedFiles.length === 0 || loading}
-                  size="large"
-                  startIcon={
-                    loading ? (
-                      <CircularProgress size={20} color="inherit" />
-                    ) : (
-                      <CloudUpload />
-                    )
-                  }
-                  sx={{
-                    px: 4,
-                    py: 1.2,
-                    fontWeight: "bold",
-                    borderRadius: 30,
-                    boxShadow: 2,
-                  }}
                 >
-                  {loading ? "Uploading..." : "Upload with Options"}
+                  {loading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    "Upload with Options"
+                  )}
                 </Button>
               </Grid>
             </Grid>
@@ -900,8 +891,8 @@ function FileUpload() {
 
           {/* Chunked Upload Tab */}
           <TabPanel value={tabValue} index={2}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
+            <Grid container spacing={3} component="div">
+              <Grid component="div" size={[12]}>
                 <Alert severity="info" sx={{ mb: 3, borderRadius: 1 }}>
                   <AlertTitle>Chunked Upload Benefits</AlertTitle>
                   Recommended for files larger than 20MB. This method breaks
@@ -910,7 +901,7 @@ function FileUpload() {
                 </Alert>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid component="div" size={[12]}>
                 <Typography
                   variant="subtitle1"
                   fontWeight="medium"
@@ -920,7 +911,7 @@ function FileUpload() {
                 </Typography>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid component="div" size={[12, null, 6]}>
                 <TextField
                   label="Custom URL"
                   fullWidth
@@ -938,7 +929,7 @@ function FileUpload() {
                 />
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid component="div" size={[12, null, 6]}>
                 <TextField
                   label="Password"
                   fullWidth
@@ -957,7 +948,7 @@ function FileUpload() {
                 />
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid component="div" size={[12, null, 6]}>
                 <TextField
                   label="Expiration Date"
                   fullWidth
@@ -976,7 +967,7 @@ function FileUpload() {
                 />
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid component="div" size={[12, null, 6]}>
                 <TextField
                   label="Max Downloads"
                   fullWidth
@@ -992,7 +983,7 @@ function FileUpload() {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid component="div" size={[12]}>
                 <Divider sx={{ my: 1 }} />
                 <Typography
                   variant="subtitle1"
@@ -1004,7 +995,7 @@ function FileUpload() {
                 </Typography>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid component="div" size={[12, null, 6]}>
                 <TextField
                   label="Folder Path"
                   fullWidth
@@ -1022,7 +1013,7 @@ function FileUpload() {
                 />
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid component="div" size={[12, null, 6]}>
                 <TextField
                   label="Tags"
                   fullWidth
@@ -1062,7 +1053,7 @@ function FileUpload() {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid component="div" size={[12]}>
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
                   {tags.map((tag) => (
                     <Chip
@@ -1089,7 +1080,7 @@ function FileUpload() {
 
               {/* Progress bar for chunked upload */}
               {loading && (
-                <Grid item xs={12}>
+                <Grid component="div" size={[12]}>
                   <Box sx={{ mt: 2, mb: 2 }}>
                     <Stack
                       direction="row"
@@ -1124,29 +1115,20 @@ function FileUpload() {
                 </Grid>
               )}
 
-              <Grid item xs={12} sx={{ textAlign: "center", mt: 2 }}>
+              <Grid component="div" size={[12]} sx={{ textAlign: "center", mt: 2 }}>
                 <Button
                   variant="contained"
                   color="primary"
+                  size="large"
+                  startIcon={<CloudUpload />}
                   onClick={handleChunkedUpload}
                   disabled={selectedFiles.length === 0 || loading}
-                  size="large"
-                  startIcon={
-                    loading ? (
-                      <CircularProgress size={20} color="inherit" />
-                    ) : (
-                      <CloudUpload />
-                    )
-                  }
-                  sx={{
-                    px: 4,
-                    py: 1.2,
-                    fontWeight: "bold",
-                    borderRadius: 30,
-                    boxShadow: 2,
-                  }}
                 >
-                  {loading ? "Uploading Chunks..." : "Upload in Chunks"}
+                  {loading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    "Upload in Chunks"
+                  )}
                 </Button>
               </Grid>
             </Grid>

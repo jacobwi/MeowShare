@@ -344,8 +344,8 @@ export const Settings: React.FC = () => {
                   Change Password
                 </Typography>
 
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={6} component="div">
+                <Grid container spacing={3} component="div">
+                  <Grid component="div" size={[12, null, 6]}>
                     <TextField
                       fullWidth
                       label="Current Password"
@@ -376,8 +376,8 @@ export const Settings: React.FC = () => {
                   </Grid>
                 </Grid>
 
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={6} component="div">
+                <Grid container spacing={3} component="div">
+                  <Grid component="div" size={[12, null, 6]}>
                     <TextField
                       fullWidth
                       label="New Password"
@@ -409,7 +409,7 @@ export const Settings: React.FC = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={6} component="div">
+                  <Grid component="div" size={[12, null, 6]}>
                     <TextField
                       fullWidth
                       label="Confirm New Password"
@@ -771,8 +771,8 @@ export const Settings: React.FC = () => {
             Danger Zone
           </Typography>
 
-          <Grid container spacing={3} alignItems="center">
-            <Grid item xs={12} sm={8}>
+          <Grid container spacing={3} alignItems="center" component="div">
+            <Grid component="div" size={[12, 8]}>
               <Typography variant="body1" fontWeight="500">
                 Reset Account
               </Typography>
@@ -783,7 +783,7 @@ export const Settings: React.FC = () => {
               </Typography>
             </Grid>
 
-            <Grid item xs={12} sm={4} sx={{ textAlign: { sm: "right" } }}>
+            <Grid component="div" size={[12, 4]} sx={{ textAlign: { sm: "right" } }}>
               <Button
                 variant="outlined"
                 color="error"
@@ -798,11 +798,11 @@ export const Settings: React.FC = () => {
               </Button>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid component="div" size={[12]}>
               <Divider />
             </Grid>
 
-            <Grid item xs={12} sm={8}>
+            <Grid component="div" size={[12, 8]}>
               <Typography variant="body1" fontWeight="500">
                 Delete Account
               </Typography>
@@ -813,7 +813,7 @@ export const Settings: React.FC = () => {
               </Typography>
             </Grid>
 
-            <Grid item xs={12} sm={4} sx={{ textAlign: { sm: "right" } }}>
+            <Grid component="div" size={[12, 4]} sx={{ textAlign: { sm: "right" } }}>
               <Button
                 variant="contained"
                 color="error"

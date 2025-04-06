@@ -244,9 +244,9 @@ const Profile: React.FC = () => {
       }}
     >
       <Container maxWidth="lg">
-        <Grid container spacing={4}>
+        <Grid container spacing={4} component="div">
           {/* Profile Section */}
-          <Grid item xs={12} md={8}>
+          <Grid component="div" size={[12, null, 8]}>
             <Paper
               elevation={0}
               sx={{
@@ -516,8 +516,8 @@ const Profile: React.FC = () => {
                   Personal Information
                 </Typography>
 
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
+                <Grid container spacing={3} component="div">
+                  <Grid component="div" size={[12, 6]}>
                     <TextField
                       fullWidth
                       label="First Name"
@@ -535,7 +535,7 @@ const Profile: React.FC = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={6}>
+                  <Grid component="div" size={[12, 6]}>
                     <TextField
                       fullWidth
                       label="Last Name"
@@ -553,7 +553,7 @@ const Profile: React.FC = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={6}>
+                  <Grid component="div" size={[12, 6]}>
                     <TextField
                       fullWidth
                       label="Username"
@@ -571,7 +571,7 @@ const Profile: React.FC = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={6}>
+                  <Grid component="div" size={[12, 6]}>
                     <TextField
                       fullWidth
                       label="Email"
@@ -590,7 +590,7 @@ const Profile: React.FC = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12}>
+                  <Grid component="div" size={[12]}>
                     <TextField
                       fullWidth
                       label="Bio"
@@ -625,7 +625,7 @@ const Profile: React.FC = () => {
           </Grid>
 
           {/* Statistics Section */}
-          <Grid item xs={12} md={4}>
+          <Grid component="div" size={[12, null, 4]}>
             <Paper
               elevation={0}
               sx={{
